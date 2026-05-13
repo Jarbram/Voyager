@@ -40,7 +40,9 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
+  
   const isDragging = useRef(false);
+  const hasMoved = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
@@ -79,7 +81,7 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
   };
 
   const handleThumbClick = (index: number): void => {
-    if (isDragging.current) return;
+    if (hasMoved.current) return;
     setGalleryIndex(index);
   };
 
@@ -87,10 +89,11 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
   const onMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
     isDragging.current = true;
+    hasMoved.current = false;
     startX.current = e.pageX - scrollRef.current.offsetLeft;
     scrollLeft.current = scrollRef.current.scrollLeft;
     scrollRef.current.style.cursor = "grabbing";
-    scrollRef.current.style.scrollBehavior = "auto"; // Disable smooth during drag
+    scrollRef.current.style.scrollBehavior = "auto";
   };
 
   const onMouseLeave = () => {
@@ -102,15 +105,23 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
 
   const onMouseUp = () => {
     if (!scrollRef.current) return;
-    isDragging.current = false;
+    setTimeout(() => {
+      isDragging.current = false;
+      hasMoved.current = false;
+    }, 50);
     scrollRef.current.style.cursor = "grab";
     scrollRef.current.style.scrollBehavior = "smooth";
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isDragging.current || !scrollRef.current) return;
-    e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
+    const distance = Math.abs(x - startX.current);
+    if (distance > 5) {
+      hasMoved.current = true;
+    }
+    
+    e.preventDefault();
     const walk = (x - startX.current) * 2;
     scrollRef.current.scrollLeft = scrollLeft.current - walk;
   };
@@ -139,7 +150,7 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
       {/* ── INTERACTIVE DEMO ── */}
       <div style={{ marginTop: "var(--vmc-space-600)", width: "100%", maxWidth: 480 }}>
         <p style={{ ...labelStyle, color: "var(--vmc-color-text-secondary)" }}>
-          Demo interactivo — Flechas sincronizadas con scroll
+          Demo interactivo — Galería con navegación independiente
         </p>
 
         <div
@@ -150,7 +161,11 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
             background: "var(--vmc-color-background-card)",
           }}
         >
-          <DetailHeader title="Volkswagen Gol 2015" subtitle="Vendedor: SubasCars" />
+          {/* Header con estado natural */}
+          <DetailHeader 
+            title="Volkswagen Gol 2015" 
+            subtitle="Vendedor: SubasCars" 
+          />
 
           <div style={{ position: "relative", width: "100%", aspectRatio: "4/3" }}>
             <img src={images[galleryIndex]} alt="Gallery" style={{ width: "100%", height: "100%", objectFit: "cover" }} />

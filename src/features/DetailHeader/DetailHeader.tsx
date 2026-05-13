@@ -35,7 +35,7 @@ export default function DetailHeader({
     padding: "0 var(--vmc-space-200)",
     background: "linear-gradient(to right, var(--vmc-color-orange-500) 0%, var(--vmc-color-orange-600) 50%, var(--vmc-color-orange-700) 100%)",
     borderRadius: "var(--vmc-radius-sm)",
-    cursor: "pointer",
+    cursor: "default", // Changed from pointer to default as the whole banner isn't clickable anymore
     userSelect: "none",
   };
 
@@ -48,13 +48,26 @@ export default function DetailHeader({
     borderRadius: "var(--vmc-radius-full)",
     flexShrink: 0,
     background: backBtnBg,
-    transition: "background var(--vmc-motion-duration-fast) var(--vmc-motion-easing-standard)",
+    transition: "all var(--vmc-motion-duration-fast) var(--vmc-motion-easing-standard)",
     color: backBtnColor,
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+    outline: "none",
   };
 
   return (
-    <div className="detail-header" onClick={onBack} style={containerStyle}>
-      <div className="back-btn" style={backBtnStyle}>
+    <div className="detail-header" style={containerStyle}>
+      <button 
+        type="button"
+        className="back-btn" 
+        onClick={(e) => {
+          e.stopPropagation();
+          onBack?.();
+        }} 
+        style={backBtnStyle}
+        aria-label="Volver"
+      >
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -67,7 +80,7 @@ export default function DetailHeader({
         >
           <path d="M15 18l-6-6 6-6" />
         </svg>
-      </div>
+      </button>
       <div
         style={{
           display: "flex",
@@ -109,10 +122,10 @@ export default function DetailHeader({
 
       {!forceState && (
         <style jsx global>{`
-          .detail-header:hover .back-btn {
+          .back-btn:hover {
             background: var(--vmc-color-orange-500) !important;
           }
-          .detail-header:active .back-btn {
+          .back-btn:active {
             background: var(--vmc-color-orange-600) !important;
             color: var(--vmc-color-text-on-dark-muted) !important;
           }
