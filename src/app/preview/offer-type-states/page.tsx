@@ -87,7 +87,7 @@ export default function OfferTypeStatesPage(): JSX.Element {
       alignItems:     "center",
       justifyContent: "center",
       minHeight:      "100vh",
-      background:     "#F2F4F3",
+      background:     "#FFFFFF",
     }}>
       <div style={{ display: "flex", gap: 20 }}>
         <OfferCard

@@ -270,7 +270,7 @@ export default function SidebarVariantsPage(): JSX.Element {
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
       <div className="vsb-wrap" style={{
         minHeight:   "100vh",
-        background:  "#F2F4F3",
+        background:  "#FFFFFF",
         padding:     "64px 80px",
         display:     "flex",
         flexWrap:    "wrap",
