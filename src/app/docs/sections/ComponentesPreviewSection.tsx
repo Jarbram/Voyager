@@ -18,6 +18,7 @@ import { DetalleOfertaBarStitchShowcaseSection } from "../components/DetalleOfer
 import { GalleryMainStitchShowcaseSection } from "../components/GalleryMainStitchShowcaseSection";
 import { AuctionConditionsStitchShowcaseSection } from "../components/AuctionConditionsStitchShowcaseSection";
 import { InfoGeneralStitchShowcaseSection } from "../components/InfoGeneralStitchShowcaseSection";
+import { AccordionHeaderStitchShowcaseSection } from "../components/AccordionHeaderStitchShowcaseSection";
 import { useComponentMode } from "../components/ComponentModeContext";
 
 const HR = (
@@ -133,6 +134,9 @@ export function ComponentesPreviewSection() {
 
           {HR0}
           <InfoGeneralStitchShowcaseSection />
+
+          {HR0}
+          <AccordionHeaderStitchShowcaseSection />
 
           {/* ── Cola ────────────────────────────────────────────────── */}
           <div className="mt-8 p-6 rounded-lg border" style={{ borderColor: "var(--vmc-color-border-subtle)" }}>

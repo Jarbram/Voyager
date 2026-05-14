@@ -38,15 +38,13 @@ const chipDotStyle = (color: string): CSSProperties => ({
 
 export default function DetailHeaderPreviewPage(): JSX.Element {
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
-  
-  const isDragging = useRef(false);
-  const hasMoved = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
+  const scrollRef    = useRef<HTMLDivElement>(null);
+  const thumbRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const isDragging   = useRef(false);
+  const hasMoved     = useRef(false);
+  const startX       = useRef(0);
+  const scrollOrigin = useRef(0);
 
-  // Simulating 8 images
   const images: string[] = [
     "/demo/bronco.jpg",
     "/demo/bronco2.jpg",
@@ -56,75 +54,57 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
     "/demo/bronco3.jpg",
     "/demo/bronco.jpg",
     "/demo/bronco2.jpg",
+    "/demo/bronco3.jpg",
+    "/demo/bronco.jpg",
   ];
 
-  // Auto-scroll to active thumbnail
   useEffect(() => {
     const activeThumb = thumbRefs.current[galleryIndex];
-    if (activeThumb && scrollRef.current && !isDragging.current) {
-      activeThumb.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
+    if (activeThumb && scrollRef.current) {
+      activeThumb.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
   }, [galleryIndex]);
 
-  const handleNext = (e: MouseEvent<HTMLButtonElement>): void => {
+  function handleNext(e: MouseEvent<HTMLButtonElement>): void {
     e.stopPropagation();
     setGalleryIndex((prev) => (prev + 1) % images.length);
-  };
+  }
 
-  const handlePrev = (e: MouseEvent<HTMLButtonElement>): void => {
+  function handlePrev(e: MouseEvent<HTMLButtonElement>): void {
     e.stopPropagation();
     setGalleryIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+  }
 
-  const handleThumbClick = (index: number): void => {
+  function handleThumbClick(index: number): void {
     if (hasMoved.current) return;
     setGalleryIndex(index);
-  };
+  }
 
-  // Drag to scroll logic
-  const onMouseDown = (e: React.MouseEvent) => {
+  function onDragStart(e: React.MouseEvent): void {
     if (!scrollRef.current) return;
     isDragging.current = true;
-    hasMoved.current = false;
-    startX.current = e.pageX - scrollRef.current.offsetLeft;
-    scrollLeft.current = scrollRef.current.scrollLeft;
+    hasMoved.current   = false;
+    startX.current     = e.pageX - scrollRef.current.offsetLeft;
+    scrollOrigin.current = scrollRef.current.scrollLeft;
     scrollRef.current.style.cursor = "grabbing";
-    scrollRef.current.style.scrollBehavior = "auto";
-  };
+  }
 
-  const onMouseLeave = () => {
-    if (!scrollRef.current) return;
-    isDragging.current = false;
-    scrollRef.current.style.cursor = "grab";
-    scrollRef.current.style.scrollBehavior = "smooth";
-  };
-
-  const onMouseUp = () => {
+  function onDragEnd(): void {
     if (!scrollRef.current) return;
     setTimeout(() => {
       isDragging.current = false;
-      hasMoved.current = false;
+      hasMoved.current   = false;
     }, 50);
     scrollRef.current.style.cursor = "grab";
-    scrollRef.current.style.scrollBehavior = "smooth";
-  };
+  }
 
-  const onMouseMove = (e: React.MouseEvent) => {
+  function onDragMove(e: React.MouseEvent): void {
     if (!isDragging.current || !scrollRef.current) return;
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const distance = Math.abs(x - startX.current);
-    if (distance > 5) {
-      hasMoved.current = true;
-    }
-    
+    if (Math.abs(x - startX.current) > 5) hasMoved.current = true;
     e.preventDefault();
-    const walk = (x - startX.current) * 2;
-    scrollRef.current.scrollLeft = scrollLeft.current - walk;
-  };
+    scrollRef.current.scrollLeft = scrollOrigin.current - (x - startX.current) * 1.5;
+  }
 
   return (
     <div
@@ -148,7 +128,7 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
       </div>
 
       {/* ── INTERACTIVE DEMO ── */}
-      <div style={{ marginTop: "var(--vmc-space-600)", width: "100%", maxWidth: 480 }}>
+      <div style={{ marginTop: "var(--vmc-space-600)", width: "100%", maxWidth: 443 }}>
         <p style={{ ...labelStyle, color: "var(--vmc-color-text-secondary)" }}>
           Demo interactivo — Galería con navegación independiente
         </p>
@@ -167,7 +147,7 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
             subtitle="Vendedor: SubasCars" 
           />
 
-          <div style={{ position: "relative", width: "100%", aspectRatio: "4/3" }}>
+          <div style={{ position: "relative", width: "100%", height: "362px" }}>
             <img src={images[galleryIndex]} alt="Gallery" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 
             <button type="button" className="gallery-action-btn" style={galleryButtonStyle({ top: "12px", right: "12px" })}>
@@ -194,20 +174,19 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
 
           <div
             ref={scrollRef}
-            onMouseDown={onMouseDown}
-            onMouseLeave={onMouseLeave}
-            onMouseUp={onMouseUp}
-            onMouseMove={onMouseMove}
-            className="thumbnails-container"
+            className="thumb-strip"
+            onMouseDown={onDragStart}
+            onMouseLeave={onDragEnd}
+            onMouseUp={onDragEnd}
+            onMouseMove={onDragMove}
             style={{
               display: "flex",
-              gap: "4px",
-              padding: "4px 0 0",
-              background: "var(--vmc-color-background-card)",
-              overflowX: "auto",
+              gap: "11px",
+              padding: "8px 0 0",
+              overflowX: "hidden",
               cursor: "grab",
               userSelect: "none",
-              scrollBehavior: "smooth",
+              background: "var(--vmc-color-background-card)",
             }}
           >
             {images.map((img, i) => {
@@ -215,12 +194,10 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
               return (
                 <div
                   key={i}
-                  ref={(el) => {
-                    thumbRefs.current[i] = el;
-                  }}
-                  onMouseUp={() => handleThumbClick(i)}
+                  ref={(el) => { thumbRefs.current[i] = el; }}
+                  onClick={() => handleThumbClick(i)}
                   className={`gallery-thumbnail ${isActive ? "is-active" : ""}`}
-                  style={{ flex: "0 0 106px", aspectRatio: "4/3", cursor: "pointer", borderRadius: "var(--vmc-radius-sm)", overflow: "hidden", position: "relative" }}
+                  style={{ flexShrink: 0, width: "115px", height: "87px", cursor: "pointer", borderRadius: "var(--vmc-radius-sm)", overflow: "hidden", position: "relative" }}
                 >
                   <img src={img} alt={`Thumb ${i}`} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div className="thumbnail-border" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", borderRadius: "var(--vmc-radius-sm)", transition: "all 100ms ease" }} />
@@ -237,8 +214,8 @@ export default function DetailHeaderPreviewPage(): JSX.Element {
         .gallery-action-btn:active { color: var(--vmc-color-neutral-700); }
         .gallery-thumbnail:hover .thumbnail-border { box-shadow: inset 0 0 0 1px var(--vmc-color-status-urgent); }
         .gallery-thumbnail.is-active .thumbnail-border { box-shadow: inset 0 0 0 2px var(--vmc-color-status-urgent); }
-        .thumbnails-container::-webkit-scrollbar { display: none; }
-        .thumbnails-container { -ms-overflow-style: none; scrollbar-width: none; }
+        .thumb-strip::-webkit-scrollbar { display: none; }
+        .thumb-strip { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   );

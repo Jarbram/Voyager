@@ -1,8 +1,12 @@
 "use client";
 
-// Token map: purple-500 → --voyager-color-vault | hover:text-white → --voyager-text-on-dark
 import { useState } from "react";
 import type { CSSProperties, JSX } from "react";
+
+const V = {
+  mid:    "var(--voyager-color-vault-mid, #3B1782)",
+  onDark: "var(--voyager-text-on-dark,   #FFFFFF)",
+} as const;
 
 interface DetalleOfertaBarProps {
   label?: string;
@@ -11,9 +15,9 @@ interface DetalleOfertaBarProps {
 
 function buildRootStyle(hovered: boolean): CSSProperties {
   const base: CSSProperties = {
-    fontFamily: "var(--font-display, 'Plus Jakarta Sans', sans-serif)",
+    fontFamily: "var(--voyager-font-display, 'Plus Jakarta Sans', sans-serif)",
     padding: "12px",
-    border: "1px solid var(--voyager-color-vault, #22005C)",
+    border: `1px solid ${V.mid}`,
     borderRightWidth: "8px",
     borderRadius: "16px",
     minHeight: "64px",
@@ -25,18 +29,10 @@ function buildRootStyle(hovered: boolean): CSSProperties {
   };
 
   if (hovered) {
-    return {
-      ...base,
-      background: "var(--voyager-color-vault, #22005C)",
-      color: "var(--voyager-text-on-dark, #FFFFFF)",
-    };
+    return { ...base, background: V.mid, color: V.onDark };
   }
 
-  return {
-    ...base,
-    background: "transparent",
-    color: "var(--voyager-color-vault, #22005C)",
-  };
+  return { ...base, background: "transparent", color: V.mid };
 }
 
 function buildDividerStyle(hovered: boolean): CSSProperties {
@@ -49,10 +45,10 @@ function buildDividerStyle(hovered: boolean): CSSProperties {
   };
 
   if (hovered) {
-    return { ...base, borderLeft: "1px solid var(--voyager-text-on-dark, #FFFFFF)" };
+    return { ...base, borderLeft: `1px solid ${V.onDark}` };
   }
 
-  return { ...base, borderLeft: "1px solid var(--voyager-color-vault, #22005C)" };
+  return { ...base, borderLeft: `1px solid ${V.mid}` };
 }
 
 export default function DetalleOfertaBar({ label = "Detalle de la oferta", onClick }: DetalleOfertaBarProps): JSX.Element {

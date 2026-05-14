@@ -44,6 +44,7 @@ export const COMPONENT_ITEMS: ComponentNavItem[] = [
   { id: "visitas",             label: "visitas",         status: "qa",  group: "Publication" },
   { id: "related",            label: "related",        status: "pending", group: "Publication" },
   { id: "group-header",       label: "group-header",   status: "pending", group: "Publication" },
+  { id: "accordion-header",  label: "accordion-header", status: "qa",     group: "Publication" },
   /* ── Discovery ───────────────────────────────── */
   { id: "quick-filters",    label: "quick-filters", status: "qa",  group: "Discovery" },
   { id: "listing-area",     label: "listing-area",  status: "qa",  group: "Discovery" },
