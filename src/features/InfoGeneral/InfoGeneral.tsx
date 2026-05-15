@@ -137,14 +137,18 @@ function CondicionesBody(): JSX.Element {
     <>
       <style>{`
         .conditions-typography { font-family: var(--font-roboto, 'Roboto', sans-serif); font-size: 14px; line-height: 1.6; color: var(--color-vault, #22005C); }
-        .conditions-typography h3 { font-family: var(--font-plus-jakarta-sans, 'Plus Jakarta Sans', sans-serif); font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: var(--color-vault, #22005C); }
+        .conditions-typography h3 { font-family: var(--font-plus-jakarta-sans, 'Plus Jakarta Sans', sans-serif); font-size: 16px; line-height: 20px; font-weight: 700; margin: 24px 0 8px; color: var(--color-vault, #22005C); }
+        .conditions-typography h3:first-child { margin-top: 0; }
         .conditions-typography h4 { font-family: var(--font-plus-jakarta-sans, 'Plus Jakarta Sans', sans-serif); font-size: 14px; font-weight: 600; margin: 16px 0 6px; color: var(--color-vault, #22005C); }
         .conditions-typography p { margin: 8px 0; }
         .conditions-typography ul { padding-left: 20px; margin: 8px 0; list-style-type: disc; }
         .conditions-typography ul ul { margin: 4px 0; list-style-type: circle; }
-        .conditions-typography li { margin: 4px 0; }
+        .conditions-typography li { margin: 6px 0; }
         .conditions-typography a { color: var(--color-vault-mid, #3B1782); text-decoration: underline; }
         .conditions-typography strong { font-weight: 600; }
+        .conditions-scroll::-webkit-scrollbar { width: 4px; }
+        .conditions-scroll::-webkit-scrollbar-track { background: transparent; }
+        .conditions-scroll::-webkit-scrollbar-thumb { background: var(--color-border-ghost, oklch(0.22 0.18 285 / 10%)); border-radius: 9999px; }
       `}</style>
       <div className="px-8 pb-8">
         <div className="space-y-8">
@@ -164,7 +168,12 @@ function CondicionesBody(): JSX.Element {
               </span>
             </span>
           </div>
-          <div className="conditions-typography" dangerouslySetInnerHTML={{ __html: CONDITIONS_HTML }} />
+          <div
+            className="conditions-scroll"
+            style={{ maxHeight: 400, overflowY: "auto", paddingRight: 8 }}
+          >
+            <div className="conditions-typography" dangerouslySetInnerHTML={{ __html: CONDITIONS_HTML }} />
+          </div>
         </div>
       </div>
     </>
