@@ -76,7 +76,7 @@ function buildContainerStyle(state: DetalleOfertaBarState): CSSProperties {
     alignItems:   "stretch",
     borderRadius: "8px",
     overflow:     "hidden",
-    minHeight:    "64px",
+    height:       "64px",
     cursor:       "pointer",
     outline:      "none",
     width:        "100%",

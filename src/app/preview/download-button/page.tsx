@@ -18,7 +18,6 @@ const frameStyle: CSSProperties = {
   display:       "flex",
   flexDirection: "column",
   gap:           "32px",
-  minWidth:      "520px",
 };
 
 const titleStyle: CSSProperties = {
@@ -35,7 +34,7 @@ const titleStyle: CSSProperties = {
 
 const rowStyle: CSSProperties = {
   display:             "grid",
-  gridTemplateColumns: "80px 1fr",
+  gridTemplateColumns: "80px 297.5px",
   alignItems:          "center",
   gap:                 "24px",
 };
