@@ -18,11 +18,13 @@ const CARD: CSSProperties = {
 
 const TOP: CSSProperties = {
   background:    "linear-gradient(135deg, var(--color-vault-900) 0%, var(--color-vault-700) 100%)",
-  padding:       "20px 20px 16px",
+  height:        130,
+  padding:       "10px 20px 8px",
   display:       "flex",
   flexDirection: "column",
-  gap:           16,
+  gap:           8,
   flexShrink:    0,
+  boxSizing:     "border-box",
 };
 
 const CLOSE_TEXT: CSSProperties = {
@@ -63,7 +65,7 @@ const V_LINE_WRAPPER: CSSProperties = {
 /* Línea vertical — solo sobre el corazón */
 const V_LINE: CSSProperties = {
   width:      1,
-  height:     12,
+  height:     8,
   background: "var(--color-text-on-dark-subtle)",
   flexShrink: 0,
 };
@@ -79,7 +81,7 @@ const TEXT_ROW: CSSProperties = {
 const HEART_LINE_ROW: CSSProperties = {
   display:    "flex",
   alignItems: "center",
-  marginTop:  6,
+  marginTop:  2,
 };
 
 /* Línea horizontal — rellena el espacio entre texto y corazón */
@@ -119,8 +121,8 @@ const STAT_NUM: CSSProperties = {
 };
 
 const ICON_CIRCLE: CSSProperties = {
-  width:          32,
-  height:         32,
+  width:          28,
+  height:         28,
   borderRadius:   9999,
   border:         "1.5px solid var(--color-text-on-dark-subtle)",
   display:        "flex",
@@ -131,11 +133,13 @@ const ICON_CIRCLE: CSSProperties = {
 
 const MID: CSSProperties = {
   background:     "linear-gradient(to right, var(--color-cyan-500) 0%, var(--color-cyan-600) 50%, var(--color-cyan-700) 100%)",
-  padding:        "14px 20px",
+  height:         100,
+  padding:        "0 20px",
   display:        "flex",
   alignItems:     "center",
   justifyContent: "center",
   flexShrink:     0,
+  boxSizing:      "border-box",
 };
 
 const PROMO_TEXT: CSSProperties = {
@@ -151,13 +155,15 @@ const PROMO_TEXT: CSSProperties = {
 
 const BOTTOM: CSSProperties = {
   background:     "oklch(1 0 0)",
-  padding:        "16px 20px",
+  height:         160,
+  padding:        "12px 20px",
   display:        "flex",
   flexDirection:  "column",
   alignItems:     "center",
   justifyContent: "center",
-  gap:            12,
-  flex:           1,
+  gap:            8,
+  flexShrink:     0,
+  boxSizing:      "border-box",
 };
 
 const BODY_TEXT: CSSProperties = {
