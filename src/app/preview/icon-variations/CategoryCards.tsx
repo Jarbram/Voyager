@@ -258,7 +258,7 @@ export function CategoryCards(): JSX.Element {
                       color: C.label, textAlign: "center",
                       lineHeight: 1.3, letterSpacing: "0.02em"
                     }}>
-                      {cards[iconIdx].label.split("\n").map((line, lIdx) => (
+                      {(cards[iconIdx]?.label || "").split("\n").map((line, lIdx) => (
                         <React.Fragment key={lIdx}>
                           {line}
                           {lIdx === 0 && <br />}
