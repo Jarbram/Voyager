@@ -25,29 +25,63 @@ const CAT_CSS = `
   padding: 8px;
   gap: 8px;
   cursor: pointer;
-  background: var(--color-surface-card, #fff) padding-box;
-  box-shadow: 0 2px 8px oklch(0.22 0.18 285 / 8%), inset 0 0 0 1px oklch(0.30 0.20 285 / 18%);
+  position: relative;
+  overflow: hidden;
+  background:
+    oklch(1 0 0) padding-box,
+    linear-gradient(135deg,
+      oklch(0.70 0.16 285) 0%,
+      oklch(1 0 0 / 0.80)  40%,
+      oklch(0.55 0.20 285) 75%,
+      oklch(0.70 0.16 285) 100%
+    ) border-box;
+  box-shadow: 0 2px 8px rgb(51.76% 37.65% 89.8% / 0.14);
   transition: box-shadow 200ms ease-out, transform 180ms ease-out;
 }
-.cat-item:hover:not(.cat-item--active) {
-  box-shadow: 0 4px 14px oklch(0.22 0.18 285 / 14%), inset 0 0 0 1px oklch(0.30 0.20 285 / 38%);
-  transform: scale(1.03);
+.cat-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.55) 0%, transparent 50%);
+  pointer-events: none;
 }
+.cat-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, oklch(0.55 0.20 285 / 0.55) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+.cat-item > * { position: relative; z-index: 1; }
+.cat-item:hover:not(.cat-item--active) {
+  box-shadow: 0 5px 18px rgb(51.76% 37.65% 89.8% / 0.26);
+  transform: scale(1.04) translateY(-1px);
+}
+.cat-item:hover:not(.cat-item--active)::after { opacity: 0.55; }
 .cat-item:active {
-  transform: scale(0.97);
+  transform: scale(0.94);
   transition: transform 60ms ease-in;
 }
 .cat-item--active {
   background:
-    var(--color-surface-card, #fff) padding-box,
+    oklch(1 0 0) padding-box,
     ${CAT_BORDER_GRADIENT} border-box;
   border: 2px solid transparent;
-  box-shadow: 0 3px 14px oklch(0.30 0.20 285 / 0.22);
+  box-shadow: 0 3px 14px rgb(51.76% 37.65% 89.8% / 0.35), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
 }
+.cat-item--active::before {
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.18) 0%, transparent 50%);
+}
+.cat-item--active::after { opacity: 0.35; }
 .cat-item--active:hover {
-  box-shadow: 0 6px 20px oklch(0.30 0.20 285 / 0.32);
-  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgb(51.76% 37.65% 89.8% / 0.45), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
+  transform: scale(1.04) translateY(-1px);
 }
+.cat-item--active:hover::after { opacity: 0.55; }
 `;
 
 function renderCarOutline(size: number, color: string): JSX.Element {

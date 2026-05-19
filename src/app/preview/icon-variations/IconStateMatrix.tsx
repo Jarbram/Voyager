@@ -27,55 +27,105 @@ const CSS = `
   justify-content: center;
   align-items: center;
   border-radius: 9999px;
-  border: 1.5px solid transparent;
+  border: 2px solid transparent;
   box-sizing: border-box;
   cursor: pointer;
-  background: var(--color-surface-card, #fff) padding-box;
-  box-shadow: 0 2px 8px oklch(0.22 0.18 285 / 8%), inset 0 0 0 1px oklch(0.30 0.20 285 / 18%);
+  position: relative;
+  overflow: hidden;
+  background:
+    oklch(1 0 0) padding-box,
+    linear-gradient(135deg,
+      oklch(0.88 0.08 285) 0%,
+      oklch(1 0 0 / 0.70)  40%,
+      oklch(0.80 0.12 285) 75%,
+      oklch(0.88 0.08 285) 100%
+    ) border-box;
+  box-shadow: 0 2px 8px rgb(51.76% 37.65% 89.8% / 0.14);
   transition: box-shadow 200ms ease-out, transform 180ms ease-out;
 }
+.plike::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.55) 0%, transparent 50%);
+  pointer-events: none;
+}
+.plike::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, oklch(0.55 0.20 285 / 0.60) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
 .plike svg {
+  position: relative;
+  z-index: 1;
   transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: center;
 }
 .plike:hover:not(:disabled):not(.plike--active) {
-  box-shadow: 0 4px 14px oklch(0.22 0.18 285 / 14%), inset 0 0 0 1px oklch(0.30 0.20 285 / 38%);
-  transform: scale(1.04);
+  box-shadow: 0 5px 18px rgb(51.76% 37.65% 89.8% / 0.26);
+  transform: scale(1.10) translateY(-1px);
+}
+.plike:hover:not(:disabled):not(.plike--active)::after {
+  opacity: 0.55;
 }
 .plike:active:not(:disabled) {
-  transform: scale(0.96);
+  transform: scale(0.92);
   transition: box-shadow 60ms ease-in, transform 60ms ease-in;
 }
 .plike:active:not(:disabled) svg {
   transform: scale(0.58);
   transition: transform 65ms cubic-bezier(0.55, 0, 1, 0.45);
 }
-.plike--sm  { width: 28px; height: 28px; }
-.plike--md  { width: 40px; height: 40px; }
-.plike--lg  { width: 56px; height: 56px; }
+.plike--sm  { width: 32px; height: 32px; }
+.plike--md  { width: 44px; height: 44px; }
+.plike--lg  { width: 60px; height: 60px; }
 .plike--active {
   background:
     linear-gradient(135deg, oklch(0.45 0.20 285) 0%, oklch(0.30 0.20 285) 100%) padding-box,
     linear-gradient(135deg,
       oklch(0.93 0.08 75)  0%,
-      oklch(0.97 0.03 80)  28%,
-      oklch(1 0 0 / 0.55)  48%,
-      oklch(0.82 0.14 285) 70%,
-      oklch(0.88 0.10 290) 100%
+      oklch(1 0 0 / 0.70)  40%,
+      oklch(0.55 0.20 285) 75%,
+      oklch(0.80 0.12 285) 100%
     ) border-box;
   border: 2px solid transparent;
-  box-shadow: 0 3px 14px oklch(0.30 0.20 285 / 0.40), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
+  box-shadow: 0 3px 14px rgb(51.76% 37.65% 89.8% / 0.35), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
 }
+.plike--active::before {
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.18) 0%, transparent 50%);
+}
+.plike--active::after { opacity: 0.35; }
 .plike--active:hover {
-  box-shadow: 0 6px 22px oklch(0.30 0.20 285 / 0.55), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
+  box-shadow: 0 6px 22px rgb(51.76% 37.65% 89.8% / 0.45), inset 0 1px 0 rgb(100% 100% 100% / 0.22);
   transform: scale(1.06);
 }
-.plike--disabled { opacity: 0.30; cursor: not-allowed; }
-.plike--skeleton {
-  background: oklch(0.91 0.004 220);
+.plike--active:hover::after { opacity: 0.55; }
+.plike--disabled {
+  opacity: 0.40;
+  cursor: not-allowed;
+  pointer-events: none;
   box-shadow: none;
+}
+.plike--disabled::after { display: none; }
+.plike--skeleton {
+  background: oklch(0.88 0.01 220);
   border-color: transparent;
+  box-shadow: none;
   cursor: default;
+  pointer-events: none;
+  animation: plike-pulse 1.6s ease-in-out infinite;
+}
+.plike--skeleton::before,
+.plike--skeleton::after { display: none; }
+@keyframes plike-pulse {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.40; }
 }
 @keyframes plike-heart-pop {
   0%   { transform: scale(0.4); }
