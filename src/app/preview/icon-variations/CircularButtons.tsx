@@ -129,6 +129,49 @@ export function CircularButtons(): JSX.Element {
           transform: scale(1.05);
           box-shadow: 0 8px 16px rgba(34,0,92,0.06);
         }
+
+        /* Nuevas Clases */
+        .voyager-variant-float {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background-color: var(--color-vault, oklch(0.22 0.18 285));
+          border: 1px solid rgba(255,255,255,0.15);
+          color: white;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 14px rgba(34,0,92,0.3);
+        }
+        .voyager-variant-float:hover {
+          background-color: var(--color-vault-mid, oklch(0.30 0.20 285));
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 6px 20px rgba(34,0,92,0.45);
+        }
+
+        .voyager-variant-zoom {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border-radius: 6px;
+          background-color: transparent;
+          border: 1.5px solid var(--color-text-on-surface, oklch(0.15 0.008 200));
+          color: var(--color-text-on-surface, oklch(0.15 0.008 200));
+          cursor: pointer;
+          font-family: ${PJS};
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          transition: all 0.2s ease-out;
+        }
+        .voyager-variant-zoom:hover {
+          background-color: var(--color-text-on-surface, oklch(0.15 0.008 200));
+          color: white;
+        }
       `}} />
 
       <p style={{
@@ -231,6 +274,38 @@ export function CircularButtons(): JSX.Element {
                   <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Paneles de datos o herramientas</span>
                 </div>
               </div>
+
+              {/* Floating Focus */}
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <button className="voyager-variant-float">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                  </svg>
+                </button>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 600, color: C.textOn }}>Enfoque Flotante</span>
+                  <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Acceso directo independiente</span>
+                </div>
+              </div>
+
+              {/* Zoom / Lightbox */}
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <button className="voyager-variant-zoom">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <path d="M3 14l4-4a1.5 1.5 0 0 1 2 0l4 4" />
+                    <path d="M12 11l2.5-2.5a1.5 1.5 0 0 1 2 0L21 13" />
+                    <circle cx="17" cy="7" r="3" fill="oklch(0.97 0.01 220)" stroke="currentColor" strokeWidth="1.5" />
+                    <line x1="17" y1="6" x2="17" y2="8" stroke="currentColor" strokeWidth="1.2" />
+                    <line x1="16" y1="7" x2="18" y2="7" stroke="currentColor" strokeWidth="1.2" />
+                  </svg>
+                  Ver imagen
+                </button>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 600, color: C.textOn }}>Zoom / Lightbox</span>
+                  <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Apertura a pantalla completa</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -282,6 +357,48 @@ export function CircularButtons(): JSX.Element {
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 600, color: C.textOn }}>Botones Ghost</span>
                   <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Listas paginadas o cabeceras</span>
+                </div>
+              </div>
+
+              {/* Numbered Pagination */}
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <button className="voyager-variant-tech" style={{ width: 32, height: 32 }} aria-label="Anterior">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                  </button>
+                  <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 700, color: C.textOn, whiteSpace: "nowrap" }}>01 / 05</span>
+                  <button className="voyager-variant-tech" style={{ width: 32, height: 32 }} aria-label="Siguiente">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </button>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 600, color: C.textOn }}>Paginación Numérica</span>
+                  <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Controlador de páginas lineal</span>
+                </div>
+              </div>
+
+              {/* Infinite Swipe */}
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <div className="voyager-variant-segmented">
+                  <button aria-label="Desplazar Izquierda">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/>
+                    </svg>
+                  </button>
+                  <div style={{ width: 1, height: 24, backgroundColor: "oklch(0.22 0.18 285 / 8%)" }} />
+                  <button aria-label="Desplazar Derecha">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M13 17l5-5-5-5M6 17l5-5-5-5"/>
+                    </svg>
+                  </button>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontFamily: PJS, fontSize: 11, fontWeight: 600, color: C.textOn }}>Swipe Rápido</span>
+                  <span style={{ fontFamily: PJS, fontSize: 10, color: C.label }}>Navegación secuencial rápida</span>
                 </div>
               </div>
             </div>

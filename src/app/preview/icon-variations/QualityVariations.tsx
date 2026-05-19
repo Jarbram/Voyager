@@ -3,42 +3,6 @@ import React from "react";
 import type { JSX } from "react";
 import { C, PJS, LEVELS, type Level, levelColor, activeColor } from "./constants";
 
-function V0Dots({ level }: { level: Level }): JSX.Element {
-  const activePos: Record<Level, number> = { 3: 0, 2: 1, 1: 2 };
-  const active = activePos[level];
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      {[0, 1, 2].map(function renderDot(i) {
-        const isActive = i === active;
-        return (
-          <span key={i} style={{
-            width: isActive ? 20 : 6, height: 6, borderRadius: 6, display: "block",
-            backgroundColor: isActive ? activeColor(level) : "oklch(0.85 0.008 220 / 40%)",
-            transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
-          }} />
-        );
-      })}
-    </div>
-  );
-}
-
-function V1Pills({ level }: { level: Level }): JSX.Element {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-      {([1, 2, 3] as Level[]).map(function renderPill(i) {
-        return (
-          <span key={i} style={{
-            width: 28, height: 4, borderRadius: 2, display: "block",
-            backgroundColor: i <= level ? activeColor(level) : "oklch(0.85 0.008 220 / 40%)",
-            transition: "background-color 300ms ease-out",
-          }} />
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── VTimeline — stepper horizontal: nodo lleno → línea → nodo vacío ──────────
 function VTimeline({ level, colorOverride }: { level: Level; colorOverride?: string }): JSX.Element {
   const color = colorOverride || levelColor(level);
   const gray  = "oklch(0.65 0.01 220 / 40%)";
@@ -71,10 +35,9 @@ function VTimeline({ level, colorOverride }: { level: Level; colorOverride?: str
   );
 }
 
-// ─── VTimelineGradient — stepper horizontal con gradientes ──────────
 function VTimelineGradient({ level, stops, id }: { level: Level, stops: {color: string, offset: string}[], id: string }): JSX.Element {
   const gray  = "oklch(0.65 0.01 220 / 40%)";
-  const color = `url(#${id}-${level})`; // Unique ID per level to prevent cross-contamination
+  const color = `url(#${id}-${level})`;
   const l1    = level >= 2 ? color : gray;
   const l2    = level === 3 ? color : gray;
   const d3    = level === 3;
@@ -111,14 +74,71 @@ function VTimelineGradient({ level, stops, id }: { level: Level, stops: {color: 
   );
 }
 
+function VGauge({ level }: { level: Level }): JSX.Element {
+  const color = levelColor(level);
+  const offset = 87.96 * (1 - level / 3);
+  return (
+    <svg width="44" height="44" viewBox="0 0 36 36" fill="none" aria-hidden>
+      <circle cx="18" cy="18" r="14" stroke="oklch(0.85 0.008 220 / 40%)" strokeWidth="3" />
+      <circle cx="18" cy="18" r="14" stroke={color} strokeWidth="3" strokeDasharray="87.96" strokeDashoffset={offset} strokeLinecap="round" transform="rotate(-90 18 18)" style={{ transition: "stroke-dashoffset 300ms ease-out" }} />
+      {level === 1 && (
+        <g stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" transform="translate(11 11)">
+          <circle cx="7" cy="7" r="5" />
+          <line x1="7" y1="7" x2="7" y2="10" />
+          <circle cx="7" cy="4" r="0.5" fill={color} />
+        </g>
+      )}
+      {level === 2 && (
+        <g stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" transform="translate(11 11)">
+          <path d="M2 2h10v10H2z" />
+          <path d="M4 5h6M4 8h4" />
+        </g>
+      )}
+      {level === 3 && (
+        <g stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" transform="translate(11 11)">
+          <path d="M2 7l3 3 7-7" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+function VShield({ level }: { level: Level }): JSX.Element {
+  const color = levelColor(level);
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {level === 1 && (
+        <>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeDasharray="3 3" />
+          <path d="M12 8v4" />
+          <circle cx="12" cy="16" r="0.5" fill={color} />
+        </>
+      )}
+      {level === 2 && (
+        <>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M12 8l3 3-3 3" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </>
+      )}
+      {level === 3 && (
+        <>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="oklch(0.70 0.20 145 / 15%)" />
+          <path d="M9 11l2 2 4-4" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 const VARIANTS: Array<{ id: number; name: string; render: (level: Level) => JSX.Element }> = [
-  { id: 0, name: "Capsule",   render: (l) => <V0Dots     level={l} /> },
-  { id: 1, name: "Pills",     render: (l) => <V1Pills    level={l} /> },
-  { id: 6, name: "Timeline (Status)", render: (l) => <VTimeline  level={l} /> },
-  { id: 9, name: "Timeline (Grad Verif)", render: (l) => <VTimelineGradient level={l} id="g-verif" stops={[
+  { id: 0, name: "Timeline (Status)", render: (l) => <VTimeline level={l} /> },
+  { id: 1, name: "Timeline (Gradient)", render: (l) => <VTimelineGradient level={l} id="g-verif" stops={[
     { offset: "0%", color: "oklch(0.50 0.20 145)" },
     { offset: "100%", color: C.success }
   ]} /> },
+  { id: 2, name: "Medidor Circular", render: (l) => <VGauge level={l} /> },
+  { id: 3, name: "Escudo de Rango", render: (l) => <VShield level={l} /> },
 ];
 
 export function QualityVariations(): JSX.Element {
