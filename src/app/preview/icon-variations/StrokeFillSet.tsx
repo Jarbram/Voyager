@@ -2,6 +2,24 @@
 import React from "react";
 import type { JSX } from "react";
 import { C, PJS } from "./constants";
+import { IconStateMatrix } from "./IconStateMatrix";
+
+function renderHeartOutline(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function renderHeartSolid(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
 
 export function StrokeFillSet(): JSX.Element {
   const xPath = "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z";
@@ -151,6 +169,11 @@ export function StrokeFillSet(): JSX.Element {
         </div>
       </div>
 
+      <IconStateMatrix
+        outlineIcon={renderHeartOutline}
+        solidIcon={renderHeartSolid}
+        ariaLabel="Favorito"
+      />
     </div>
   );
 }

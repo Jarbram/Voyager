@@ -1,6 +1,26 @@
+"use client";
 import React from "react";
 import type { JSX } from "react";
 import { C, PJS } from "./constants";
+import { IconStateMatrix } from "./IconStateMatrix";
+
+function renderEyeOutline(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2.5 12C2.5 12 6.5 5 12 5C17.5 5 21.5 12 21.5 12C21.5 12 17.5 19 12 19C6.5 19 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function renderEyeSolid(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden>
+      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+    </svg>
+  );
+}
 
 export function IconBadgeStats(): JSX.Element {
   const badges = [
@@ -143,6 +163,11 @@ export function IconBadgeStats(): JSX.Element {
           </div>
         ))}
       </div>
+      <IconStateMatrix
+        outlineIcon={renderEyeOutline}
+        solidIcon={renderEyeSolid}
+        ariaLabel="Vistas"
+      />
     </div>
   );
 }

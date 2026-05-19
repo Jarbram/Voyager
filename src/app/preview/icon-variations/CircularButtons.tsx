@@ -2,6 +2,49 @@
 import React from "react";
 import type { JSX } from "react";
 import { C, PJS } from "./constants";
+import { IconStateMatrix, GhostStateMatrix } from "./IconStateMatrix";
+
+function renderExpandOutline(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none"
+      stroke={color} strokeWidth="2" strokeLinecap="round" aria-hidden>
+      <path d="M11.2 15.2 L11.2 11.2 L15.2 11.2" />
+      <path d="M28.8 11.2 L28.8 15.2 M28.8 11.2 L24.8 11.2" />
+      <path d="M11.2 24.8 L11.2 28.8 L15.2 28.8" />
+      <path d="M24.8 28.8 L28.8 28.8 L28.8 24.8" />
+    </svg>
+  );
+}
+
+function renderExpandSolid(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none"
+      stroke={color} strokeWidth="3" strokeLinecap="round" aria-hidden>
+      <path d="M11.2 15.2 L11.2 11.2 L15.2 11.2" />
+      <path d="M28.8 11.2 L28.8 15.2 M28.8 11.2 L24.8 11.2" />
+      <path d="M11.2 24.8 L11.2 28.8 L15.2 28.8" />
+      <path d="M24.8 28.8 L28.8 28.8 L28.8 24.8" />
+    </svg>
+  );
+}
+
+function renderArrowOutline(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function renderArrowSolid(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  );
+}
 
 export function CircularButtons(): JSX.Element {
   return (
@@ -406,6 +449,16 @@ export function CircularButtons(): JSX.Element {
           
         </div>
       </div>
+      <IconStateMatrix
+        outlineIcon={renderExpandOutline}
+        solidIcon={renderExpandSolid}
+        ariaLabel="Expandir"
+      />
+      <GhostStateMatrix
+        outlineIcon={renderArrowOutline}
+        solidIcon={renderArrowSolid}
+        ariaLabel="Siguiente"
+      />
     </div>
   );
 }

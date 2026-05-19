@@ -1,7 +1,76 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import type { JSX } from "react";
 import { C, PJS } from "./constants";
+
+const CAT_BORDER_GRADIENT = `linear-gradient(135deg,
+  oklch(0.93 0.08 75)  0%,
+  oklch(0.97 0.03 80)  28%,
+  oklch(1 0 0 / 0.55)  48%,
+  oklch(0.82 0.14 285) 70%,
+  oklch(0.88 0.10 290) 100%
+)`;
+
+const CAT_CSS = `
+.cat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+  padding: 8px;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--color-surface-card, #fff) padding-box;
+  box-shadow: 0 2px 8px oklch(0.22 0.18 285 / 8%), inset 0 0 0 1px oklch(0.30 0.20 285 / 18%);
+  transition: box-shadow 200ms ease-out, transform 180ms ease-out;
+}
+.cat-item:hover:not(.cat-item--active) {
+  box-shadow: 0 4px 14px oklch(0.22 0.18 285 / 14%), inset 0 0 0 1px oklch(0.30 0.20 285 / 38%);
+  transform: scale(1.03);
+}
+.cat-item:active {
+  transform: scale(0.97);
+  transition: transform 60ms ease-in;
+}
+.cat-item--active {
+  background:
+    var(--color-surface-card, #fff) padding-box,
+    ${CAT_BORDER_GRADIENT} border-box;
+  border: 2px solid transparent;
+  box-shadow: 0 3px 14px oklch(0.30 0.20 285 / 0.22);
+}
+.cat-item--active:hover {
+  box-shadow: 0 6px 20px oklch(0.30 0.20 285 / 0.32);
+  transform: scale(1.03);
+}
+`;
+
+function renderCarOutline(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11.1 2 11.5 2 12v4c0 .6.4 1 1 1h2" />
+      <circle cx="7" cy="17" r="2" />
+      <circle cx="17" cy="17" r="2" />
+    </svg>
+  );
+}
+
+function renderCarSolid(size: number, color: string): JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11.1 2 11.5 2 12v4c0 .6.4 1 1 1h2" />
+      <circle cx="7" cy="17" r="2" />
+      <circle cx="17" cy="17" r="2" />
+    </svg>
+  );
+}
 
 export function CategoryCards(): JSX.Element {
   const cards = [
@@ -470,8 +539,26 @@ export function CategoryCards(): JSX.Element {
     }
   ];
 
+  const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>({});
+  const [demoActive, setDemoActive] = useState<boolean[]>([false, false, false, false]);
+
+  function handleItemClick(event: React.MouseEvent<HTMLButtonElement>): void {
+    const key = event.currentTarget.dataset.key as string;
+    setSelectedItems(prev => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  function handleDemoClick(event: React.MouseEvent<HTMLButtonElement>): void {
+    const idx = Number(event.currentTarget.dataset.demoIdx);
+    setDemoActive(prev => {
+      const next = [...prev];
+      next[idx] = !next[idx];
+      return next;
+    });
+  }
+
   return (
     <div style={{ marginTop: 64 }}>
+      <style dangerouslySetInnerHTML={{ __html: CAT_CSS }} />
       <p style={{
         fontFamily: PJS, fontSize: 11, fontWeight: 600,
         letterSpacing: "0.08em", textTransform: "uppercase",
@@ -548,32 +635,79 @@ export function CategoryCards(): JSX.Element {
               </p>
 
               <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                {group.items.map((item, itemIdx) => (
-                  <div key={itemIdx} style={{
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                    width: 110, height: 110,
-                    backgroundColor: "oklch(0.30 0.20 285 / 5%)",
-                    borderRadius: 12,
-                    border: `1px solid transparent`,
-                    padding: 8,
-                    gap: 8,
-                    boxSizing: "border-box"
-                  }}>
-                    {item.icon}
-                    <span style={{
-                      fontFamily: PJS, fontSize: 9, fontWeight: 600,
-                      color: C.label, textAlign: "center",
-                      lineHeight: 1.2, letterSpacing: "0.02em"
-                    }}>
-                      {item.name}
-                    </span>
-                  </div>
-                ))}
+                {group.items.map(function renderCatItem(item, itemIdx) {
+                  const itemKey = `${idx}-${itemIdx}`;
+                  const isActive = !!selectedItems[itemKey];
+                  let cls = "cat-item";
+                  if (isActive) { cls = "cat-item cat-item--active"; }
+                  return (
+                    <button
+                      key={itemIdx}
+                      className={cls}
+                      type="button"
+                      aria-label={item.name}
+                      data-key={itemKey}
+                      onClick={handleItemClick}
+                    >
+                      {item.icon}
+                      <span style={{
+                        fontFamily: PJS, fontSize: 9, fontWeight: 600,
+                        color: isActive ? "oklch(0.30 0.20 285)" : (C.label),
+                        textAlign: "center", lineHeight: 1.2, letterSpacing: "0.02em",
+                        pointerEvents: "none",
+                      }}>
+                        {item.name}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
         </div>
       </div>
+      <div style={{
+        backgroundColor: "var(--color-surface-card, #fff)",
+        padding: "20px 24px", borderRadius: 8,
+        border: "1px solid oklch(0.22 0.18 285 / 8%)", marginTop: 32,
+      }}>
+        <p style={{
+          fontFamily: PJS, fontSize: 10, fontWeight: 700, textTransform: "uppercase",
+          letterSpacing: "0.08em", color: "oklch(0.55 0.02 220)", margin: "0 0 20px",
+        }}>
+          Demo interactivo — click para toggle
+        </p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+          {conceptualCategories.map(function renderDemoCard(group, idx) {
+            const item = group.items[0];
+            if (!item) { return null; }
+            const isActive = demoActive[idx];
+            let cls = "cat-item";
+            if (isActive) { cls = "cat-item cat-item--active"; }
+            return (
+              <button
+                key={idx}
+                className={cls}
+                type="button"
+                aria-label={item.name}
+                data-demo-idx={String(idx)}
+                onClick={handleDemoClick}
+              >
+                {item.icon}
+                <span style={{
+                  fontFamily: PJS, fontSize: 9, fontWeight: 600,
+                  color: isActive ? "oklch(0.30 0.20 285)" : C.label,
+                  textAlign: "center", lineHeight: 1.2, letterSpacing: "0.02em",
+                  pointerEvents: "none",
+                }}>
+                  {item.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
     </div>
   );
 }
