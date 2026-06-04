@@ -215,6 +215,30 @@ const GAMBLE_CSS = `
     box-shadow: 0 0 30px -2px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
   }
   .fx-pulse .sps-cta:active { transform: scale(0.97); box-shadow: inset 0 2px 6px rgb(0% 0% 0% / 0.25); }
+
+  /* ════ Mix · inundación iter3 + desplazamiento+barrita iter1 + color icono iter4 ════ */
+  .fx-mix .gs-item:hover {
+    transform: translateX(3px);
+    background-image: linear-gradient(90deg,
+      color-mix(in oklch, var(--gs-accent) 26%, transparent) 0%,
+      color-mix(in oklch, var(--gs-accent) 6%, transparent) 60%,
+      transparent 100%);
+    box-shadow: inset 3px 0 0 0 var(--gs-accent), -10px 0 26px -12px var(--gs-glow);
+  }
+  .fx-mix .gs-item:hover .gs-icon { stroke: var(--gs-accent); filter: drop-shadow(0 0 4px var(--gs-glow)); }
+  .fx-mix .gs-item:active {
+    transform: translateX(3px) scale(0.985);
+    box-shadow: inset 3px 0 0 0 var(--gs-accent), inset 0 2px 7px rgb(0% 0% 0% / 0.32);
+  }
+  .fx-mix .gs-sub:hover { transform: translateX(2px); }
+  .fx-mix .sps-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 26px -6px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.28);
+  }
+  .fx-mix .sps-cta:active {
+    transform: scale(0.97) translateY(1px);
+    box-shadow: inset 0 2px 5px rgb(0% 0% 0% / 0.22);
+  }
   .gs-item--active { background-color: rgb(100% 100% 100% / 0.07); }
   .gs-item--active::before {
     content: '';
@@ -597,6 +621,13 @@ const THEMES: GambleTheme[] = [
     tagline: "Iconos directos · calendario-check · $ · grid · fábrica · teléfono",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 380,
+  },
+  {
+    id: "fx-mix", fx: "fx-mix",
+    name: "Mix",
+    tagline: "Inundación orange (iter3) + desplazamiento y barrita (iter1) + icono cambia de color (iter4)",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 300,
   },
 ];
 
