@@ -1,0 +1,274 @@
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { ButtonGhost } from "@/components/ui/ButtonGhost";
+import { SectionTitle } from "../components/SectionTitle";
+import { FooterImageProvider } from "../components/FooterImageContext";
+import { FooterDoneShowcaseSection } from "../components/FooterDoneShowcaseSection";
+import { SidebarStitchShowcaseSection } from "../components/SidebarStitchShowcaseSection";
+import { ParticipaStitchShowcaseSection } from "../components/ParticipaStitchShowcaseSection";
+import { RelatedCardStitchShowcaseSection } from "../components/RelatedCardStitchShowcaseSection";
+import { OfferCardStitchShowcaseSection } from "../components/OfferCardStitchShowcaseSection";
+import { VisitasStitchShowcaseSection } from "../components/VisitasStitchShowcaseSection";
+import { QuickFiltersStitchShowcaseSection } from "../components/QuickFiltersStitchShowcaseSection";
+import { EmpresaProfileStitchShowcaseSection } from "../components/EmpresaProfileStitchShowcaseSection";
+import { BracketTitleStitchShowcaseSection } from "../components/BracketTitleStitchShowcaseSection";
+import { HeaderStitchShowcaseSection } from "../components/HeaderStitchShowcaseSection";
+import { ListingAreaDoneShowcaseSection } from "../components/ListingAreaDoneShowcaseSection";
+import { DetalleOfertaBarStitchShowcaseSection } from "../components/DetalleOfertaBarStitchShowcaseSection";
+import { GalleryMainStitchShowcaseSection } from "../components/GalleryMainStitchShowcaseSection";
+import { AuctionConditionsStitchShowcaseSection } from "../components/AuctionConditionsStitchShowcaseSection";
+import { InfoGeneralStitchShowcaseSection } from "../components/InfoGeneralStitchShowcaseSection";
+import { SignInStitchShowcaseSection } from "../components/SignInStitchShowcaseSection";
+import { ButtonDoneShowcaseSection } from "../components/ButtonDoneShowcaseSection";
+import { useComponentMode } from "../components/ComponentModeContext";
+
+const HR = (
+  <hr style={{ border: "none", borderTop: "1px solid var(--vmc-color-border-subtle)", margin: "32px 0 0" }} />
+);
+
+const HR0 = (
+  <hr style={{ border: "none", borderTop: "1px solid var(--vmc-color-border-subtle)", margin: "0" }} />
+);
+
+export function ComponentesPreviewSection() {
+  const { mode } = useComponentMode();
+  const isDone = mode === "done";
+
+  return (
+    <section>
+      <SectionTitle
+        id="preview-ui"
+        title="Átomos UI"
+        subtitle="ib-componentes — construcción sobre tokens; sin portar código de referencias externas"
+        badge="btn"
+      />
+
+      {/* ── Button — status: done ──────────────────────────────────────── */}
+      <div
+        className="rounded-lg border p-6 space-y-4"
+        style={{
+          background: "var(--vmc-color-background-secondary)",
+          borderColor: "var(--vmc-color-border-default)",
+        }}
+      >
+        <p className="text-sm font-semibold" style={{ color: "var(--vmc-color-text-primary)" }}>
+          Button (`btn` en TAXONOMY.md)
+        </p>
+        <p className="text-sm" style={{ color: "var(--vmc-color-text-secondary)" }}>
+          `src/components/ui/Button` — primario (gradiente Vault), secundario/ghost (borde marca), destructivo. Estados
+          loading/disabled según DESIGN.md §9. Sin HEX; solo `var(--vmc-*)`.
+        </p>
+        <div className="flex flex-wrap gap-3 items-center pt-2">
+          <Button variant="primary" type="button">
+            Primario
+          </Button>
+          <Button variant="secondary" type="button">
+            Secundario
+          </Button>
+          <Button variant="ghost" type="button">
+            Ghost
+          </Button>
+          <Button variant="destructive" type="button">
+            Destructivo
+          </Button>
+          <Button variant="primary" loading type="button">
+            Cargando
+          </Button>
+          <Button variant="primary" disabled type="button">
+            Deshabilitado
+          </Button>
+        </div>
+        <p className="text-xs font-mono pt-2" style={{ color: "var(--vmc-color-text-tertiary)" }}>
+          {"import { Button } from \"@/components/ui/Button\";"}
+        </p>
+      </div>
+
+      {/* ── secondary-live — nueva variante outline naranja ───────────── */}
+      <div
+        className="rounded-lg border p-6 space-y-4 mt-4"
+        style={{
+          background: "var(--vmc-color-background-secondary)",
+          borderColor: "var(--vmc-color-border-default)",
+        }}
+      >
+        <p className="text-sm font-semibold" style={{ color: "var(--vmc-color-text-primary)" }}>
+          Button — variante <code className="font-mono text-xs px-1 py-0.5 rounded" style={{ background: "var(--vmc-color-background-tertiary)" }}>secondary-live</code>
+        </p>
+        <p className="text-sm" style={{ color: "var(--vmc-color-text-secondary)" }}>
+          Outline ghost con borde en gradiente En Vivo (orange-500 → orange-600 → orange-700).
+          Hover: fondo naranja 8% opacidad. Active: fondo 14% + borde orange-700.
+          Técnica: background-clip padding-box / border-box — radio concéntrico preservado.
+        </p>
+
+        {/* Sobre fondo blanco */}
+        <div className="rounded p-4 space-y-3" style={{ background: "var(--vmc-color-surface-card, #fff)" }}>
+          <p className="text-xs font-mono" style={{ color: "var(--vmc-color-text-tertiary)" }}>
+            sobre fondo blanco (surface-card)
+          </p>
+          <div className="flex flex-wrap gap-3 items-center">
+            <Button variant="secondary-live" type="button">
+              Ingresa
+            </Button>
+            <Button variant="secondary-live" type="button">
+              Agendar visita
+            </Button>
+            <Button variant="secondary-live" loading type="button">
+              Cargando
+            </Button>
+            <Button variant="secondary-live" disabled type="button">
+              Deshabilitado
+            </Button>
+          </div>
+        </div>
+
+        {/* Comparación side-by-side primary vs secondary-live */}
+        <div className="rounded p-4 space-y-3" style={{ background: "var(--vmc-color-surface-card, #fff)" }}>
+          <p className="text-xs font-mono" style={{ color: "var(--vmc-color-text-tertiary)" }}>
+            comparación primary ↔ secondary-live
+          </p>
+          <div className="flex flex-wrap gap-3 items-center">
+            <Button variant="primary" type="button">
+              Ingresa
+            </Button>
+            <Button variant="secondary-live" type="button">
+              Ingresa
+            </Button>
+          </div>
+        </div>
+
+        <p className="text-xs font-mono" style={{ color: "var(--vmc-color-text-tertiary)" }}>
+          {'<Button variant="secondary-live">Ingresa</Button>'}
+        </p>
+      </div>
+
+      {/* ── ButtonGhost — status: done ───────────────────────────────────── */}
+      <div
+        className="rounded-lg border p-6 space-y-4 mt-6"
+        style={{
+          background: "var(--vmc-color-background-secondary)",
+          borderColor: "var(--vmc-color-border-default)",
+        }}
+      >
+        <p className="text-sm font-semibold" style={{ color: "var(--vmc-color-text-primary)" }}>
+          ButtonGhost (`btn-ghost` en TAXONOMY.md)
+        </p>
+        <p className="text-sm" style={{ color: "var(--vmc-color-text-secondary)" }}>
+          Siempre sobre fondos naranja/gradiente. Default: borde white + texto white. Hover: fondo white + texto
+          orange-600. Pressed: fondo orange-700. Plus Jakarta Sans 16px/500, 300×47px.
+        </p>
+        <div
+          className="flex flex-wrap gap-6 items-center justify-center p-8 rounded-md"
+          style={{ background: "var(--vmc-color-orange-600)" }}
+        >
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs" style={{ color: "oklch(1 0 0 / 70%)" }}>Default</span>
+            <ButtonGhost type="button">Ver ofertas relacionadas</ButtonGhost>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs" style={{ color: "oklch(1 0 0 / 70%)" }}>Disabled</span>
+            <ButtonGhost type="button" disabled>Ver ofertas relacionadas</ButtonGhost>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs" style={{ color: "oklch(1 0 0 / 70%)" }}>Loading</span>
+            <ButtonGhost type="button" loading>Ver ofertas relacionadas</ButtonGhost>
+          </div>
+        </div>
+        <p className="text-xs font-mono pt-2" style={{ color: "var(--vmc-color-text-tertiary)" }}>
+          {"import { ButtonGhost } from \"@/components/ui/ButtonGhost\";"}
+        </p>
+      </div>
+
+      {/* ── ButtonDone (Concorde) — siempre visible ──────────────────── */}
+      {HR0}
+      <ButtonDoneShowcaseSection />
+
+      {/* ── Stitch / pending — solo en modo normal ───────────────────── */}
+      {!isDone && (
+        <>
+          {HR}
+          <HeaderStitchShowcaseSection />
+
+          {HR}
+          <ParticipaStitchShowcaseSection />
+
+          {HR}
+          <RelatedCardStitchShowcaseSection />
+
+          {HR}
+          <OfferCardStitchShowcaseSection />
+
+          {HR}
+          <VisitasStitchShowcaseSection />
+
+          {HR}
+          <QuickFiltersStitchShowcaseSection />
+
+          {HR}
+          <EmpresaProfileStitchShowcaseSection />
+
+          {HR}
+          <BracketTitleStitchShowcaseSection />
+        </>
+      )}
+
+      {/* ── ListingArea — status: done — siempre visible ─────────────── */}
+      {HR0}
+      <ListingAreaDoneShowcaseSection />
+
+      {/* ── Footer + Sidebar — status: done — siempre visibles ───────── */}
+      <FooterImageProvider>
+        {HR0}
+        <FooterDoneShowcaseSection />
+
+        {HR0}
+        <SidebarStitchShowcaseSection />
+      </FooterImageProvider>
+
+      {/* ── Stitch (detalle) — solo en modo normal ────────────────────── */}
+      {!isDone && (
+        <>
+          {HR0}
+          <DetalleOfertaBarStitchShowcaseSection />
+
+          {HR0}
+          <GalleryMainStitchShowcaseSection />
+
+          {HR0}
+          <AuctionConditionsStitchShowcaseSection />
+
+          {HR0}
+          <InfoGeneralStitchShowcaseSection />
+
+          {HR0}
+          <SignInStitchShowcaseSection />
+
+          {/* ── Cola ────────────────────────────────────────────────── */}
+          <div className="mt-8 p-6 rounded-lg border" style={{ borderColor: "var(--vmc-color-border-subtle)" }}>
+            <p className="text-sm font-semibold mb-2" style={{ color: "var(--vmc-color-text-primary)" }}>
+              Siguiente en cola
+            </p>
+            <ol className="list-decimal pl-5 space-y-2 text-sm" style={{ color: "var(--vmc-color-text-secondary)" }}>
+              <li>
+                Revisar{" "}
+                <Link href="/docs/taxonomia" className="underline underline-offset-2" style={{ color: "var(--vmc-color-text-brand)" }}>
+                  taxonomía
+                </Link>{" "}
+                si cambia el detalle legacy (Challenge D).
+              </li>
+              <li>Header — pipeline UX → Stitch → Frontend</li>
+              <li>
+                Fundamentos técnicos en{" "}
+                <Link href="/docs/fundamentos" className="underline underline-offset-2" style={{ color: "var(--vmc-color-text-brand)" }}>
+                  /docs/fundamentos
+                </Link>
+                .
+              </li>
+            </ol>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}

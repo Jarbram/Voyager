@@ -1,0 +1,782 @@
+"use client";
+
+import { useState } from "react";
+import type { CSSProperties, JSX } from "react";
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Sidebar · Iteraciones "Gamble / Apostador"
+   Lenguaje visual heredado de /preview/components/button-primary:
+   bordes-gradiente neón, glow difuso animado y dúo de marca (live ↔ negociable).
+
+   Spec base (Stitch v3 · 87/100):
+     256px · vault #22005C · brand area 64px · 5 nav items · Plus Jakarta Sans
+   El feature real src/features/Sidebar permanece intacto — esto es exploración.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+const FD = "var(--font-display, 'Plus Jakarta Sans', sans-serif)";
+
+/* ── CSS compartido — los temas inyectan sus variables inline ─────────────── */
+const GAMBLE_CSS = `
+  @property --gs-angle {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 135deg;
+  }
+
+  .gs-root {
+    width: 226px;
+    flex-shrink: 0;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    background: var(--gs-bg);
+    box-shadow:
+      inset 0 1px 0 rgb(100% 100% 100% / 0.06),
+      0 24px 48px -12px rgb(0% 0% 0% / 0.55);
+    font-family: ${FD};
+  }
+
+  /* Brand area — wordmark ›vmc‹ Subastas · glow de marca difuso */
+  .gs-brand {
+    position: relative;
+    min-height: 92px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1px;
+    padding: 18px 18px 16px;
+    border-bottom: 1px solid rgb(100% 100% 100% / 0.08);
+    overflow: hidden;
+  }
+  .gs-brand::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 14px;
+    width: 120px;
+    height: 40px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background-image: var(--gs-grad);
+    filter: blur(26px);
+    opacity: 0.38;
+    z-index: 0;
+    animation: gs-breathe 4.5s ease-in-out infinite;
+  }
+  .gs-wordmark {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    color: var(--vmc-color-base-white, #fff);
+  }
+  /* Logo CONSTANTE — no cambia con el tema */
+  .gs-wordmark .gs-chev {
+    color: oklch(0.80 0.14 195);
+    text-shadow: 0 0 10px oklch(0.80 0.14 195 / 0.45);
+  }
+  .gs-brand-name {
+    position: relative;
+    z-index: 1;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    color: rgb(100% 100% 100% / 0.50);
+    margin-top: 1px;
+  }
+  .gs-brand-sub {
+    position: relative;
+    z-index: 1;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgb(100% 100% 100% / 0.42);
+    margin-top: 5px;
+  }
+  .gs-brand-sub b { color: var(--gs-accent); font-weight: 700; }
+
+  /* Nav item */
+  .gs-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 48px;
+    padding: 0 16px;
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+    transition: background-color 160ms cubic-bezier(0.3,0,0,1),
+                transform 180ms cubic-bezier(0.25,0.8,0.25,1),
+                box-shadow 220ms ease;
+  }
+  .gs-item:hover { background-color: rgb(100% 100% 100% / 0.06); }
+  .gs-item:focus-visible {
+    outline: 2px solid rgb(100% 100% 100% / 0.55);
+    outline-offset: -2px;
+  }
+
+  /* ════ Efecto 1 · Lift & Glow — firma Button Primary ════ */
+  .fx-lift .gs-item:hover {
+    transform: translateX(3px);
+    box-shadow: inset 3px 0 0 0 var(--gs-accent), -10px 0 26px -12px var(--gs-glow);
+  }
+  .fx-lift .gs-item:active { transform: translateX(3px) scale(0.98); }
+  .fx-lift .gs-sub:hover { transform: translateX(2px); }
+  .fx-lift .sps-cta:hover {
+    --gs-angle: 220deg;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 26px -6px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.28);
+  }
+  .fx-lift .sps-cta:active {
+    transform: scale(0.97) translateY(1px);
+    box-shadow: inset 0 2px 5px rgb(0% 0% 0% / 0.22);
+  }
+
+  /* ════ Efecto 2 · Angle Sweep — sheen + rotación de ángulo ════ */
+  .fx-sweep .gs-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 32%, rgb(100% 100% 100% / 0.16) 50%, transparent 68%);
+    transform: translateX(-130%);
+    transition: transform 550ms cubic-bezier(0.3,0,0,1);
+    pointer-events: none;
+  }
+  .fx-sweep .gs-item:hover::after { transform: translateX(130%); }
+  .fx-sweep .sps-cta { --gs-angle: 135deg; }
+  .fx-sweep .sps-cta:hover { --gs-angle: 320deg; transform: translateY(-1px); }
+  .fx-sweep .sps-cta:active { --gs-angle: 135deg; transform: scale(0.98); }
+
+  /* ════ Efecto 3 · Press-In — inundación orange + hundimiento ════ */
+  .fx-press .gs-item:hover {
+    background-color: transparent;
+    background-image: linear-gradient(90deg,
+      color-mix(in oklch, var(--gs-accent) 26%, transparent) 0%,
+      color-mix(in oklch, var(--gs-accent) 6%, transparent) 60%,
+      transparent 100%);
+  }
+  .fx-press .gs-item:active {
+    transform: scale(0.985);
+    box-shadow: inset 0 2px 7px rgb(0% 0% 0% / 0.32);
+  }
+  .fx-press .sps-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .fx-press .sps-cta:active {
+    transform: scale(0.96) translateY(2px);
+    box-shadow: inset 0 3px 9px rgb(0% 0% 0% / 0.34);
+  }
+
+  /* ════ Efecto 4 · Neon Border — borde-gradiente firma Button Primary ════ */
+  .fx-border .gs-item:hover {
+    background-color: rgb(100% 100% 100% / 0.04);
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--gs-accent) 70%, transparent),
+                0 0 18px -4px var(--gs-glow);
+  }
+  .fx-border .gs-item:active {
+    transform: scale(0.985);
+    box-shadow: inset 0 0 0 1.5px var(--gs-accent), inset 0 2px 5px rgb(0% 0% 0% / 0.25);
+  }
+  .fx-border .sps-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--gs-accent) 80%, transparent),
+                0 9px 22px -6px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+  }
+  .fx-border .sps-cta:active { transform: scale(0.97); }
+
+  /* ════ Efecto 5 · Glow Pulse — el glow brota desde el icono ════ */
+  .fx-pulse .gs-icon { transition: transform 200ms cubic-bezier(0.25,0.8,0.25,1), filter 200ms ease; }
+  .fx-pulse .gs-item:hover {
+    background: radial-gradient(120px 60px at 26px 50%,
+      color-mix(in oklch, var(--gs-accent) 28%, transparent) 0%, transparent 70%);
+  }
+  .fx-pulse .gs-item:hover .gs-icon {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 6px var(--gs-glow));
+  }
+  .fx-pulse .gs-item:active { transform: scale(0.99); }
+  .fx-pulse .sps-cta:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px -2px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+  }
+  .fx-pulse .sps-cta:active { transform: scale(0.97); box-shadow: inset 0 2px 6px rgb(0% 0% 0% / 0.25); }
+  .gs-item--active { background-color: rgb(100% 100% 100% / 0.07); }
+  .gs-item--active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 6px; bottom: 6px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background-image: var(--gs-grad);
+    box-shadow: 0 0 14px var(--gs-glow), 0 0 4px var(--gs-glow);
+    animation: gs-rail 3.5s ease-in-out infinite;
+  }
+  .gs-icon { flex-shrink: 0; }
+  .gs-label {
+    flex: 1;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgb(100% 100% 100% / 0.82);
+  }
+  .gs-label--active { font-weight: 700; color: var(--vmc-color-base-white, #fff); }
+  .gs-count {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 999px;
+    color: var(--gs-accent);
+    background: color-mix(in oklch, var(--gs-accent) 16%, transparent);
+  }
+
+  /* Sub-items — banda oscura, count + chevron, rail activo */
+  .gs-subband { background-color: rgb(0% 0% 0% / 0.18); }
+  .gs-sub {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 16px 0 49px;
+    cursor: pointer;
+    transition: background-color 150ms;
+  }
+  .gs-sub:hover { background-color: rgb(100% 100% 100% / 0.05); }
+  .gs-sub:focus-visible {
+    outline: 2px solid rgb(100% 100% 100% / 0.55);
+    outline-offset: -2px;
+  }
+  .gs-sub--active { background-color: rgb(100% 100% 100% / 0.07); }
+  .gs-sub--active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background-image: var(--gs-grad);
+    box-shadow: 0 0 12px var(--gs-glow), 0 0 4px var(--gs-glow);
+    animation: gs-rail 3.5s ease-in-out infinite;
+  }
+  .gs-sub-label {
+    flex: 1;
+    font-size: 14px;
+    color: rgb(100% 100% 100% / 0.78);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .gs-sub--active .gs-sub-label { color: var(--vmc-color-base-white, #fff); font-weight: 600; }
+  .gs-sub-count { font-size: 12px; color: rgb(100% 100% 100% / 0.42); flex-shrink: 0; }
+
+  /* Divider line antes de Soporte */
+  .gs-divider {
+    height: 1px;
+    margin: 10px 16px;
+    background-color: rgb(100% 100% 100% / 0.10);
+  }
+
+  /* Bottom slot — contiene el banner Subaspass */
+  .gs-cta-wrap { margin-top: auto; padding: 13px; }
+
+  /* ── Banner Subaspass — W200 · fondo Vault → live orange ────────────────── */
+  .sps {
+    position: relative;
+    width: 200px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    box-sizing: border-box;
+    font-family: ${FD};
+    color: var(--vmc-color-base-white, #fff);
+    background:
+      radial-gradient(130% 70% at 50% 8%, oklch(0.34 0.20 290) 0%, transparent 58%),
+      linear-gradient(176deg,
+        oklch(0.22 0.18 285) 0%,
+        oklch(0.19 0.15 288) 48%,
+        oklch(0.40 0.16 45)  100%);
+    box-shadow:
+      inset 0 1px 0 rgb(100% 100% 100% / 0.08),
+      0 18px 36px -14px rgb(0% 0% 0% / 0.55);
+  }
+  .sps--fluid { width: 100%; }
+  .sps::before {
+    content: '';
+    position: absolute;
+    left: -20%; bottom: -30%;
+    width: 140%; height: 60%;
+    background: radial-gradient(60% 60% at 50% 50%, oklch(0.72 0.16 55 / 0.55) 0%, transparent 70%);
+    filter: blur(12px);
+    pointer-events: none;
+    animation: gs-breathe 5s ease-in-out infinite;
+  }
+  .sps-content { position: relative; z-index: 1; display: flex; flex-direction: column; }
+  .sps-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgb(100% 100% 100% / 0.78);
+    margin: 0 0 6px;
+  }
+  .sps-title {
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-shadow: 0 2px 8px rgb(0% 0% 0% / 0.30);
+  }
+  .sps-desc {
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgb(100% 100% 100% / 0.82);
+    margin: 10px 0 0;
+  }
+  .sps-cta {
+    margin-top: 16px;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: ${FD};
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--vmc-color-base-white, #fff);
+    text-shadow: 0 1px 2px rgb(0% 0% 0% / 0.28);
+    background-image: linear-gradient(var(--gs-angle), oklch(0.74 0.17 55) 0%, oklch(0.66 0.18 42) 100%);
+    box-shadow: 0 6px 16px -4px oklch(0.72 0.16 55 / 0.55), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+    transition: --gs-angle 0.4s cubic-bezier(0.25,0.8,0.25,1), transform 0.18s ease, box-shadow 0.25s ease;
+  }
+  .sps-cta:hover { --gs-angle: 300deg; transform: translateY(-1px); box-shadow: 0 10px 22px -6px oklch(0.72 0.16 55 / 0.65), inset 0 1px 0 rgb(100% 100% 100% / 0.25); }
+  .sps-cta:active { transform: scale(0.98) translateY(1px); }
+
+  @keyframes gs-breathe {
+    0%,100% { opacity: 0.40; transform: scale(0.94); }
+    50%     { opacity: 0.65; transform: scale(1.06); }
+  }
+  @keyframes gs-rail {
+    0%,100% { opacity: 0.75; }
+    50%     { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gs-brand::after, .gs-item--active::before, .gs-sub--active::before, .sps::before { animation: none; }
+  }
+`;
+
+/* ── Tipos ─────────────────────────────────────────────────────────────────── */
+interface GambleTheme {
+  id:       string;
+  name:     string;
+  tagline:  string;
+  bg:       string;
+  grad:     string;
+  glow:     string;
+  accent:   string;
+  bannerH?: number;   // alto del banner Subaspass dentro del sidebar
+}
+
+interface SubItem  { label: string; count: number; children?: SubItem[] }
+interface NavEntry {
+  label:     string;
+  iconPath:  string;
+  count?:    number;
+  children?: SubItem[];
+  section?:  string;
+}
+
+/* ── Datos — 5 nav items del spec + taxonomía real VMC ───────────────────────── */
+const NAV: NavEntry[] = [
+  { label: "Hoy",            iconPath: "M8 2v2M16 2v2M3 8h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" },
+  {
+    label: "Tipo de oferta", iconPath: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+    children: [
+      { label: "En vivo",    count: 38 },
+      { label: "Negociable", count: 2  },
+    ],
+  },
+  {
+    label: "Categorías", iconPath: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+    children: [
+      {
+        label: "Equipos diversos", count: 4,
+        children: [
+          { label: "Equipos varios",      count: 1 },
+          { label: "Laptops",             count: 1 },
+          { label: "Motores",             count: 1 },
+          { label: "Equipos Industriales", count: 1 },
+        ],
+      },
+      {
+        label: "Vehicular", count: 35,
+        children: [
+          {
+            label: "Liviano", count: 35,
+            children: [
+              { label: "Siniestrado", count: 7  },
+              { label: "Seminuevo",   count: 28 },
+            ],
+          },
+        ],
+      },
+      {
+        label: "Mobiliario", count: 1,
+        children: [
+          { label: "Mobiliario,", count: 1 },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Empresas", iconPath: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10",
+    children: [
+      { label: "Autoplan",            count: 6  },
+      { label: "Maquisistema",        count: 7  },
+      { label: "Pacífico",            count: 6  },
+      { label: "Mapfre",              count: 3  },
+      { label: "Perú Autos",          count: 3  },
+      { label: "SubasCars",           count: 1  },
+      { label: "Incamotors",          count: 1  },
+      { label: "Pandero Seminuevos",  count: 12 },
+      { label: "Inversiones F&B",     count: 1  },
+    ],
+  },
+  { label: "Centro de ayuda", section: "Soporte", iconPath: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" },
+];
+
+/* ── Tono Vault — BLOQUEADO. Fondo idéntico en las 3 iteraciones. ────────────── */
+const VAULT_BG = "linear-gradient(180deg, oklch(0.21 0.16 285) 0%, oklch(0.15 0.12 285) 100%)";
+
+/* Acento ORANGE de marca · IDÉNTICO en las 3. Lo único que varía: el efecto
+   hover/pressed (id = clase fx-*), siempre en el lenguaje del Button Primary. */
+const ORANGE_GRAD   = "oklch(0.76 0.17 58) 0%, oklch(0.66 0.18 42) 100%";
+const ORANGE_GLOW   = "oklch(0.72 0.16 55 / 0.55)";
+const ORANGE_ACCENT = "oklch(0.76 0.16 58)";
+
+const THEMES: GambleTheme[] = [
+  {
+    id: "fx-lift",
+    name: "Lift & Glow",
+    tagline: "Hover eleva la fila + glow orange · pressed scale(0.97)",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+  },
+  {
+    id: "fx-sweep",
+    name: "Angle Sweep",
+    tagline: "Hover barre un sheen + rota el ángulo del gradiente del CTA",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 240,
+  },
+  {
+    id: "fx-press",
+    name: "Press-In",
+    tagline: "Hover inunda orange + pressed hunde con sombra interna",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 300,
+  },
+  {
+    id: "fx-border",
+    name: "Neon Border",
+    tagline: "Hover dibuja borde-gradiente orange + glow (firma del borde Button Primary)",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 360,
+  },
+  {
+    id: "fx-pulse",
+    name: "Glow Pulse",
+    tagline: "Hover: el glow brota desde el icono + scale; pressed contrae",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 420,
+  },
+];
+
+/* ── Iconos ─────────────────────────────────────────────────────────────────── */
+interface IconProps { path: string; active: boolean }
+function NavIcon({ path, active }: IconProps): JSX.Element {
+  const stroke = active ? "var(--vmc-color-base-white, #fff)" : "rgb(255 255 255 / 0.62)";
+  return (
+    <svg className="gs-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d={path} />
+    </svg>
+  );
+}
+
+function ChevronIcon({ open }: { open: boolean }): JSX.Element {
+  const transform = open ? "rotate(90deg)" : "rotate(0deg)";
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+      stroke="rgb(255 255 255 / 0.42)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+      style={{ transition: "transform 160ms cubic-bezier(0.3,0,0,1)", transform, flexShrink: 0 }}>
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+/* ── Sub-item recursivo ───────────────────────────────────────────────────────── */
+interface GambleSubProps {
+  item:      SubItem;
+  depth:     number;
+  open:      Set<string>;
+  activeSub: string | null;
+  onToggle:  (label: string) => void;
+  onSelect:  (label: string) => void;
+}
+function GambleSub({ item, depth, open, activeSub, onToggle, onSelect }: GambleSubProps): JSX.Element {
+  const hasChildren = item.children !== undefined && item.children.length > 0;
+  const isOpen      = open.has(item.label);
+  const isActive    = activeSub === item.label;
+  const padLeft     = 33 + depth * 16;
+  const rowClass    = isActive ? "gs-sub gs-sub--active" : "gs-sub";
+
+  function handleClick(): void {
+    if (hasChildren) { onToggle(item.label); } else { onSelect(item.label); }
+  }
+
+  return (
+    <div>
+      <div className={rowClass} style={{ paddingLeft: padLeft }} role="button" tabIndex={0} onClick={handleClick}>
+        <span className="gs-sub-label">{item.label}</span>
+        <span className="gs-sub-count">({item.count})</span>
+        <ChevronIcon open={hasChildren && isOpen} />
+      </div>
+      {hasChildren && isOpen && item.children!.map(function renderChild(child) {
+        return (
+          <GambleSub
+            key={child.label} item={child} depth={depth + 1}
+            open={open} activeSub={activeSub} onToggle={onToggle} onSelect={onSelect}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── Sidebar de una iteración ─────────────────────────────────────────────────── */
+interface SidebarProps { theme: GambleTheme }
+
+const DEFAULT_OPEN = ["Empresas"];
+
+function GambleSidebar({ theme }: SidebarProps): JSX.Element {
+  const [active,    setActive]    = useState<string>("Empresas");
+  const [activeSub, setActiveSub] = useState<string | null>("Autoplan");
+  const [open,      setOpen]      = useState<Set<string>>(new Set(DEFAULT_OPEN));
+
+  function handleToggle(label: string): void {
+    const next = new Set(open);
+    if (next.has(label)) { next.delete(label); } else { next.add(label); }
+    setOpen(next);
+  }
+
+  function handleSelect(entry: NavEntry): void {
+    setActive(entry.label);
+    if (entry.children !== undefined) {
+      handleToggle(entry.label);
+    } else {
+      setActiveSub(null);
+    }
+  }
+
+  function handleSelectSub(label: string): void {
+    setActiveSub(label);
+  }
+
+  const rootStyle = {
+    "--gs-bg":     theme.bg,
+    "--gs-grad":   theme.grad,
+    "--gs-glow":   theme.glow,
+    "--gs-accent": theme.accent,
+  } as CSSProperties;
+
+  return (
+    <aside className={"gs-root " + theme.id} style={rootStyle} aria-label="Navegación principal">
+      {/* Brand — wordmark ›vmc‹ Subastas */}
+      <div className="gs-brand">
+        <div className="gs-wordmark">
+          <span className="gs-chev">›</span>
+          <span>vmc</span>
+          <span className="gs-chev">‹</span>
+        </div>
+        <span className="gs-brand-name">Subastas</span>
+        <span className="gs-brand-sub">powered by <b>SUBASTOP.Co</b></span>
+      </div>
+
+      {/* Nav */}
+      <nav aria-label="Menú principal" style={{ paddingTop: 6 }}>
+        {NAV.map(function renderEntry(entry) {
+          const isActive     = active === entry.label;
+          const hasChildren  = entry.children !== undefined;
+          const showChildren = hasChildren && open.has(entry.label);
+          return (
+            <div key={entry.label}>
+              {entry.section !== undefined && <div className="gs-divider" />}
+
+              <div
+                className={isActive ? "gs-item gs-item--active" : "gs-item"}
+                role="button" tabIndex={0}
+                onClick={function onClick() { handleSelect(entry); }}
+              >
+                <NavIcon path={entry.iconPath} active={isActive} />
+                <span className={isActive ? "gs-label gs-label--active" : "gs-label"}>{entry.label}</span>
+                <ChevronIcon open={showChildren} />
+              </div>
+
+              {showChildren && (
+                <div className="gs-subband">
+                  {entry.children!.map(function renderSub(sub) {
+                    return (
+                      <GambleSub
+                        key={sub.label} item={sub} depth={1}
+                        open={open} activeSub={activeSub}
+                        onToggle={handleToggle} onSelect={handleSelectSub}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* Banner Subaspass — dentro del sidebar, al fondo · alto por iteración */}
+      <div className="gs-cta-wrap">
+        <SubaspassBanner fluid height={theme.bannerH} />
+      </div>
+    </aside>
+  );
+}
+
+/* ── Banner Subaspass — W200 · alturas 250 / 400 / 600 ───────────────────────── */
+function ArrowIcon(): JSX.Element {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function pickTitleSize(height: number): number {
+  if (height >= 560) { return 28; }
+  if (height >= 360) { return 23; }
+  return 20;
+}
+
+function bannerClass(fluid: boolean): string {
+  if (fluid) { return "sps sps--fluid"; }
+  return "sps";
+}
+
+interface BannerProps { height?: number; fluid?: boolean }
+function SubaspassBanner({ height, fluid = false }: BannerProps): JSX.Element {
+  const styleObj: CSSProperties = {};
+  let showDesc  = true;
+  let titleSize = 22;
+  if (height !== undefined) {
+    styleObj.height = height;
+    titleSize = pickTitleSize(height);
+    showDesc  = height >= 360;
+  }
+  return (
+    <div className={bannerClass(fluid)} style={styleObj}>
+      <div className="sps-content">
+        <p className="sps-eyebrow">¿Te tienta el riesgo alto?</p>
+        <h3 className="sps-title" style={{ fontSize: titleSize }}>Compra Subaspass</h3>
+        {showDesc && <p className="sps-desc">Participa sin consignar y sin restricciones.</p>}
+        <button type="button" className="sps-cta">
+          Comprar ahora <ArrowIcon />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Etiqueta de iteración ─────────────────────────────────────────────────────── */
+function IterationLabel({ index, theme }: { index: number; theme: GambleTheme }): JSX.Element {
+  return (
+    <div style={{ marginBottom: 14, textAlign: "center" }}>
+      <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.10em",
+        textTransform: "uppercase", color: "var(--vmc-color-text-primary)", margin: "0 0 2px" }}>
+        Iteración {index} · {theme.name}
+      </p>
+      <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 500,
+        color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
+        {theme.tagline}
+      </p>
+    </div>
+  );
+}
+
+/* ── Page ──────────────────────────────────────────────────────────────────────── */
+export default function SidebarGamblePreviewPage(): JSX.Element {
+  return (
+    <main style={{ background: "var(--vmc-color-background-secondary)", minHeight: "100vh", padding: "40px 32px" }}>
+      <style>{GAMBLE_CSS}</style>
+
+      <div style={{ maxWidth: 980, margin: "0 auto 32px" }}>
+        <h1 style={{ fontFamily: FD, fontSize: 22, fontWeight: 800, margin: "0 0 4px",
+          color: "var(--vmc-color-text-primary)" }}>
+          Sidebar · Gamble / Apostador
+        </h1>
+        <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
+          W226 · tono Vault + acento orange de marca BLOQUEADOS en las 3 · lo único que cambia es el
+          efecto hover/pressed (lenguaje Button Primary) · 5 nav items · Plus Jakarta Sans.
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 40, justifyContent: "center", alignItems: "flex-start" }}>
+        {THEMES.map(function renderTheme(theme, i) {
+          return (
+            <div key={theme.id} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <IterationLabel index={i + 1} theme={theme} />
+              <GambleSidebar theme={theme} />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Banner Subaspass ───────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 980, margin: "72px auto 24px" }}>
+        <h2 style={{ fontFamily: FD, fontSize: 18, fontWeight: 800, margin: "0 0 4px",
+          color: "var(--vmc-color-text-primary)" }}>
+          Banner Subaspass · W200
+        </h2>
+        <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
+          Promo "Compra Subaspass" sobre fondo Vault → live orange. Tres alturas: 250 · 400 · 600.
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 40, justifyContent: "center", alignItems: "flex-start" }}>
+        {[250, 400, 600].map(function renderBanner(h) {
+          return (
+            <div key={h} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.10em",
+                textTransform: "uppercase", color: "var(--vmc-color-text-primary)", margin: "0 0 14px" }}>
+                Alto {h}
+              </p>
+              <SubaspassBanner height={h} />
+            </div>
+          );
+        })}
+      </div>
+    </main>
+  );
+}
