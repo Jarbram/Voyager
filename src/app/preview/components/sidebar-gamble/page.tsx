@@ -134,6 +134,7 @@ const GAMBLE_CSS = `
     box-shadow: inset 3px 0 0 0 var(--gs-accent), -10px 0 26px -12px var(--gs-glow);
   }
   .fx-lift .gs-item:active { transform: translateX(3px) scale(0.98); }
+  .fx-lift .gs-item:hover .gs-icon { transform: translateX(2px) scale(1.08); }
   .fx-lift .gs-sub:hover { transform: translateX(2px); }
   .fx-lift .sps-cta:hover {
     --gs-angle: 220deg;
@@ -156,6 +157,7 @@ const GAMBLE_CSS = `
     pointer-events: none;
   }
   .fx-sweep .gs-item:hover::after { transform: translateX(130%); }
+  .fx-sweep .gs-item:hover .gs-icon { filter: drop-shadow(0 0 5px var(--gs-glow)); }
   .fx-sweep .sps-cta { --gs-angle: 135deg; }
   .fx-sweep .sps-cta:hover { --gs-angle: 320deg; transform: translateY(-1px); }
   .fx-sweep .sps-cta:active { --gs-angle: 135deg; transform: scale(0.98); }
@@ -172,6 +174,7 @@ const GAMBLE_CSS = `
     transform: scale(0.985);
     box-shadow: inset 0 2px 7px rgb(0% 0% 0% / 0.32);
   }
+  .fx-press .gs-item:active .gs-icon { transform: scale(0.88); }
   .fx-press .sps-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
   .fx-press .sps-cta:active {
     transform: scale(0.96) translateY(2px);
@@ -189,6 +192,7 @@ const GAMBLE_CSS = `
     transform: scale(0.985);
     box-shadow: inset 0 0 0 1.5px var(--gs-accent), inset 0 2px 5px rgb(0% 0% 0% / 0.25);
   }
+  .fx-border .gs-item:hover .gs-icon { stroke: var(--gs-accent); filter: drop-shadow(0 0 4px var(--gs-glow)); }
   .fx-border .sps-cta:hover {
     transform: translateY(-1px);
     box-shadow: 0 0 0 2px color-mix(in oklch, var(--gs-accent) 80%, transparent),
@@ -197,7 +201,6 @@ const GAMBLE_CSS = `
   .fx-border .sps-cta:active { transform: scale(0.97); }
 
   /* ════ Efecto 5 · Glow Pulse — el glow brota desde el icono ════ */
-  .fx-pulse .gs-icon { transition: transform 200ms cubic-bezier(0.25,0.8,0.25,1), filter 200ms ease; }
   .fx-pulse .gs-item:hover {
     background: radial-gradient(120px 60px at 26px 50%,
       color-mix(in oklch, var(--gs-accent) 28%, transparent) 0%, transparent 70%);
@@ -223,7 +226,10 @@ const GAMBLE_CSS = `
     box-shadow: 0 0 14px var(--gs-glow), 0 0 4px var(--gs-glow);
     animation: gs-rail 3.5s ease-in-out infinite;
   }
-  .gs-icon { flex-shrink: 0; }
+  .gs-icon {
+    flex-shrink: 0;
+    transition: transform 200ms cubic-bezier(0.25,0.8,0.25,1), stroke 180ms ease, filter 200ms ease;
+  }
   .gs-label {
     flex: 1;
     font-size: 14px;
@@ -406,14 +412,14 @@ interface NavEntry {
 const NAV: NavEntry[] = [
   { label: "Hoy",            iconPath: "M8 2v2M16 2v2M3 8h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" },
   {
-    label: "Tipo de oferta", iconPath: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+    label: "Tipo de oferta", iconPath: "M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01",
     children: [
       { label: "En vivo",    count: 38 },
       { label: "Negociable", count: 2  },
     ],
   },
   {
-    label: "Categorías", iconPath: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+    label: "Categorías", iconPath: "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
     children: [
       {
         label: "Equipos diversos", count: 4,
@@ -445,7 +451,7 @@ const NAV: NavEntry[] = [
     ],
   },
   {
-    label: "Empresas", iconPath: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10",
+    label: "Empresas", iconPath: "M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4",
     children: [
       { label: "Autoplan",            count: 6  },
       { label: "Maquisistema",        count: 7  },
@@ -460,6 +466,44 @@ const NAV: NavEntry[] = [
   },
   { label: "Centro de ayuda", section: "Soporte", iconPath: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" },
 ];
+
+/* ── Sets de iconos por iteración — fx-lift usa los paths de NAV (fallback) ────── */
+const ICON_SETS: Record<string, Record<string, string>> = {
+  "fx-sweep": {
+    "Hoy":             "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+    "Tipo de oferta":  "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+    "Categorías":      "M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5",
+    "Empresas":        "M4 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M2 13h20",
+    "Centro de ayuda": "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M14.9 9.1l4.2-4.2M4.9 19.1l4.2-4.2",
+  },
+  "fx-press": {
+    "Hoy":             "M8 2v2M16 2v2M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01",
+    "Tipo de oferta":  "M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM9.5 9.5h.01M14.5 14.5h.01M9.5 15l5-5",
+    "Categorías":      "M3 3h8v8H3zM13 3h8v5h-8zM13 12h8v9h-8zM3 15h8v6H3z",
+    "Empresas":        "M3 9l1.5-5h15L21 9M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9M2 9h20M9 21v-6h6v6",
+    "Centro de ayuda": "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM9.1 9a2.9 2.9 0 0 1 5.6 1c0 2-2.9 2.5-2.9 2.5M12 14h.01",
+  },
+  "fx-border": {
+    "Hoy":             "M17 18a5 5 0 0 0-10 0M12 2v7M5.6 11.6L4.2 10.2M1 18h2M21 18h2M19.8 10.2l-1.4 1.4M23 22H1M8 6l4-4 4 4",
+    "Tipo de oferta":  "M19 5L5 19M6.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM17.5 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+    "Categorías":      "M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.3 7L12 12l8.7-5M12 22V12",
+    "Empresas":        "M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 13v.01M9 17v.01",
+    "Centro de ayuda": "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01",
+  },
+  "fx-pulse": {
+    "Hoy":             "M13 2L3 14h9l-1 8 10-12h-9z",
+    "Tipo de oferta":  "M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M21 12h-5a2 2 0 0 0 0 4h5a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1zM3 7h16",
+    "Categorías":      "M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+    "Empresas":        "M3 21h18M3 10h18M5 6l7-3 7 3M5 10v11M19 10v11M9 14v3M15 14v3",
+    "Centro de ayuda": "M7.9 20A9 9 0 1 0 4 16.1L2 22zM9.5 9a2.5 2.5 0 0 1 4.9.6c0 2-2.4 2-2.4 3.4M12 17h.01",
+  },
+};
+
+function iconFor(themeId: string, label: string, fallback: string): string {
+  const set = ICON_SETS[themeId];
+  if (set !== undefined && set[label] !== undefined) { return set[label]; }
+  return fallback;
+}
 
 /* ── Tono Vault — BLOQUEADO. Fondo idéntico en las 3 iteraciones. ────────────── */
 const VAULT_BG = "linear-gradient(180deg, oklch(0.21 0.16 285) 0%, oklch(0.15 0.12 285) 100%)";
@@ -633,7 +677,7 @@ function GambleSidebar({ theme }: SidebarProps): JSX.Element {
                 role="button" tabIndex={0}
                 onClick={function onClick() { handleSelect(entry); }}
               >
-                <NavIcon path={entry.iconPath} active={isActive} />
+                <NavIcon path={iconFor(theme.id, entry.label, entry.iconPath)} active={isActive} />
                 <span className={isActive ? "gs-label gs-label--active" : "gs-label"}>{entry.label}</span>
                 <ChevronIcon open={showChildren} />
               </div>
