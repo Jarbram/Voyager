@@ -46,7 +46,7 @@ const COMPONENTS: FrameGroup[] = [
   {
     frame: "Navegación",
     items: [
-      { href: "/preview/components/sidebar-gamble", label: "Sidebar · Gamble (5 iter.)", iframeH: 1900 },
+      { href: "/preview/components/sidebar-gamble", label: "Sidebar · Gamble (8 iter.)", iframeH: 1900 },
     ],
   },
   {

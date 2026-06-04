@@ -389,7 +389,8 @@ const GAMBLE_CSS = `
 
 /* ── Tipos ─────────────────────────────────────────────────────────────────── */
 interface GambleTheme {
-  id:       string;
+  id:       string;   // clave del set de iconos (ICON_SETS) + key React
+  fx:       string;   // clase del efecto hover/pressed (fx-*)
   name:     string;
   tagline:  string;
   bg:       string;
@@ -497,6 +498,33 @@ const ICON_SETS: Record<string, Record<string, string>> = {
     "Empresas":        "M3 21h18M3 10h18M5 6l7-3 7 3M5 10v11M19 10v11M9 14v3M15 14v3",
     "Centro de ayuda": "M7.9 20A9 9 0 1 0 4 16.1L2 22zM9.5 9a2.5 2.5 0 0 1 4.9.6c0 2-2.4 2-2.4 3.4M12 17h.01",
   },
+
+  /* ─ Set "Subasta literal" — cada icono 1:1 con el texto ─ */
+  "set-subasta": {
+    "Hoy":             "M8 2v2M16 2v2M3 8h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM12 15a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z",
+    "Tipo de oferta":  "M14 13l-7.5 7.5a2.12 2.12 0 0 1-3-3L11 10M16 16l6-6M8 8l6-6M9 7l8 8M21 11l-8-8",
+    "Categorías":      "M20 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z",
+    "Empresas":        "M3 22h18M4 11h16M12 2l8 6H4zM6 11v7M10 11v7M14 11v7M18 11v7",
+    "Centro de ayuda": "M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a1 1 0 0 1-1-1v-5a9 9 0 0 1 18 0v5a1 1 0 0 1-1 1h-2a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3M21 16v2a4 4 0 0 1-4 4h-5",
+  },
+
+  /* ─ Set "Comercio" — metáforas comerciales ─ */
+  "set-comercio": {
+    "Hoy":             "M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z",
+    "Tipo de oferta":  "M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1zM8 7h8M8 11h8M8 15h5",
+    "Categorías":      "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+    "Empresas":        "M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35zM6 18h12M6 14h12M6 10h12",
+    "Centro de ayuda": "M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
+  },
+
+  /* ─ Set "Data / Soporte" — directo ─ */
+  "set-data": {
+    "Hoy":             "M8 2v2M16 2v2M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM9 16l2 2 4-4",
+    "Tipo de oferta":  "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v12M15 9.5a2.5 2.5 0 0 0-2.5-1.5h-1a2 2 0 0 0 0 4h1a2 2 0 0 1 0 4h-1A2.5 2.5 0 0 1 9 14.5",
+    "Categorías":      "M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18",
+    "Empresas":        "M2 20h20M4 20V8l5 4V8l5 4V7l5 4v9M9 20v-4h2v4M13 16h.01",
+    "Centro de ayuda": "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z",
+  },
 };
 
 function iconFor(themeId: string, label: string, fallback: string): string {
@@ -516,38 +544,59 @@ const ORANGE_ACCENT = "oklch(0.76 0.16 58)";
 
 const THEMES: GambleTheme[] = [
   {
-    id: "fx-lift",
+    id: "fx-lift", fx: "fx-lift",
     name: "Lift & Glow",
-    tagline: "Hover eleva la fila + glow orange · pressed scale(0.97)",
+    tagline: "Iconos clásicos · hover eleva la fila + glow orange",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
   },
   {
-    id: "fx-sweep",
+    id: "fx-sweep", fx: "fx-sweep",
     name: "Angle Sweep",
-    tagline: "Hover barre un sheen + rota el ángulo del gradiente del CTA",
+    tagline: "Iconos alternos · sheen barre la fila + rota el ángulo del CTA",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 240,
   },
   {
-    id: "fx-press",
+    id: "fx-press", fx: "fx-press",
     name: "Press-In",
-    tagline: "Hover inunda orange + pressed hunde con sombra interna",
+    tagline: "Iconos densos · hover inunda orange + pressed hunde",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 300,
   },
   {
-    id: "fx-border",
+    id: "fx-border", fx: "fx-border",
     name: "Neon Border",
-    tagline: "Hover dibuja borde-gradiente orange + glow (firma del borde Button Primary)",
+    tagline: "Iconos finos · borde-gradiente orange + glow en hover",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 360,
   },
   {
-    id: "fx-pulse",
+    id: "fx-pulse", fx: "fx-pulse",
     name: "Glow Pulse",
-    tagline: "Hover: el glow brota desde el icono + scale; pressed contrae",
+    tagline: "Iconos energéticos · glow brota desde el icono + scale",
     bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 420,
+  },
+  {
+    id: "set-subasta", fx: "fx-border",
+    name: "Subasta literal",
+    tagline: "Iconos 1:1 con el texto · martillo de subasta · carpeta · headset",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 260,
+  },
+  {
+    id: "set-comercio", fx: "fx-pulse",
+    name: "Comercio",
+    tagline: "Iconos comerciales · sol (hoy) · recibo · lista · tienda · guía",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 320,
+  },
+  {
+    id: "set-data", fx: "fx-lift",
+    name: "Data / Soporte",
+    tagline: "Iconos directos · calendario-check · $ · grid · fábrica · teléfono",
+    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 380,
   },
 ];
 
@@ -650,7 +699,7 @@ function GambleSidebar({ theme }: SidebarProps): JSX.Element {
   } as CSSProperties;
 
   return (
-    <aside className={"gs-root " + theme.id} style={rootStyle} aria-label="Navegación principal">
+    <aside className={"gs-root " + theme.fx} style={rootStyle} aria-label="Navegación principal">
       {/* Brand — wordmark ›vmc‹ Subastas */}
       <div className="gs-brand">
         <div className="gs-wordmark">
@@ -781,8 +830,8 @@ export default function SidebarGamblePreviewPage(): JSX.Element {
           Sidebar · Gamble / Apostador
         </h1>
         <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
-          W226 · tono Vault + acento orange de marca BLOQUEADOS en las 3 · lo único que cambia es el
-          efecto hover/pressed (lenguaje Button Primary) · 5 nav items · Plus Jakarta Sans.
+          W226 · tono Vault + acento orange de marca BLOQUEADOS · varían el efecto hover/pressed
+          (lenguaje Button Primary) y el set de iconos · 5 nav items · Plus Jakarta Sans.
         </p>
       </div>
 
