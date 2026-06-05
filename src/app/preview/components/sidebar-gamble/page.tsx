@@ -566,6 +566,9 @@ const ORANGE_GRAD   = "oklch(0.76 0.17 58) 0%, oklch(0.66 0.18 42) 100%";
 const ORANGE_GLOW   = "oklch(0.72 0.16 55 / 0.55)";
 const ORANGE_ACCENT = "oklch(0.76 0.16 58)";
 
+/* Mix — dirección elegida · base Vault-dark #2E0F70 = oklch(0.26 0.19 285) */
+const MIX_BG = "linear-gradient(180deg, oklch(0.26 0.19 285) 0%, oklch(0.19 0.15 285) 100%)";
+
 const THEMES: GambleTheme[] = [
   {
     id: "fx-lift", fx: "fx-lift",
@@ -625,8 +628,8 @@ const THEMES: GambleTheme[] = [
   {
     id: "fx-mix", fx: "fx-mix",
     name: "Mix",
-    tagline: "Inundación orange (iter3) + desplazamiento y barrita (iter1) + icono cambia de color (iter4)",
-    bg: VAULT_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    tagline: "Base Vault #2E0F70 · inundación orange (iter3) + desplazamiento y barrita (iter1) + icono cambia de color (iter4)",
+    bg: MIX_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 300,
   },
 ];
@@ -836,7 +839,7 @@ function SubaspassBanner({ height, fluid = false }: BannerProps): JSX.Element {
 /* ── Etiqueta de iteración ─────────────────────────────────────────────────────── */
 function IterationLabel({ index, theme }: { index: number; theme: GambleTheme }): JSX.Element {
   return (
-    <div style={{ marginBottom: 14, textAlign: "center" }}>
+    <div style={{ marginBottom: 14, textAlign: "center", maxWidth: 260 }}>
       <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.10em",
         textTransform: "uppercase", color: "var(--vmc-color-text-primary)", margin: "0 0 2px" }}>
         Iteración {index} · {theme.name}
@@ -849,25 +852,91 @@ function IterationLabel({ index, theme }: { index: number; theme: GambleTheme })
   );
 }
 
+/* ── Dirección elegida — Mix es la base; el resto son exploraciones previas ──────── */
+const FEATURED_ID = "fx-mix";
+function isFeatured(theme: GambleTheme): boolean { return theme.id === FEATURED_ID; }
+function isExploration(theme: GambleTheme): boolean { return theme.id !== FEATURED_ID; }
+
+function SectionTitle({ kicker, title, note }: { kicker: string; title: string; note?: string }): JSX.Element {
+  return (
+    <div style={{ maxWidth: 980, margin: "0 auto 24px" }}>
+      <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "var(--vmc-color-text-tertiary)", margin: "0 0 3px" }}>
+        {kicker}
+      </p>
+      <h2 style={{ fontFamily: FD, fontSize: 18, fontWeight: 800, margin: 0,
+        color: "var(--vmc-color-text-primary)" }}>
+        {title}
+      </h2>
+      {note !== undefined && (
+        <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: "4px 0 0" }}>
+          {note}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ChosenBadge(): JSX.Element {
+  return (
+    <span style={{ fontFamily: FD, fontSize: 10, fontWeight: 800, letterSpacing: "0.08em",
+      textTransform: "uppercase", color: "var(--vmc-color-base-white, #fff)", padding: "3px 10px",
+      borderRadius: 999, marginBottom: 10,
+      backgroundImage: "linear-gradient(120deg, oklch(0.74 0.17 55) 0%, oklch(0.66 0.18 42) 100%)",
+      boxShadow: "0 6px 16px -6px oklch(0.72 0.16 55 / 0.55)" }}>
+      ✦ Dirección elegida
+    </span>
+  );
+}
+
 /* ── Page ──────────────────────────────────────────────────────────────────────── */
 export default function SidebarGamblePreviewPage(): JSX.Element {
+  const featured     = THEMES.filter(isFeatured);
+  const explorations = THEMES.filter(isExploration);
+
   return (
     <main style={{ background: "var(--vmc-color-background-secondary)", minHeight: "100vh", padding: "40px 32px" }}>
       <style>{GAMBLE_CSS}</style>
 
-      <div style={{ maxWidth: 980, margin: "0 auto 32px" }}>
+      <div style={{ maxWidth: 980, margin: "0 auto 40px" }}>
         <h1 style={{ fontFamily: FD, fontSize: 22, fontWeight: 800, margin: "0 0 4px",
           color: "var(--vmc-color-text-primary)" }}>
           Sidebar · Gamble / Apostador
         </h1>
         <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
-          W226 · tono Vault + acento orange de marca BLOQUEADOS · varían el efecto hover/pressed
-          (lenguaje Button Primary) y el set de iconos · 5 nav items · Plus Jakarta Sans.
+          W226 · acento orange de marca · efecto en lenguaje Button Primary · 5 nav items · Plus Jakarta Sans.
+          Dirección elegida: <b>Mix</b> sobre base Vault <b>#2E0F70</b>.
         </p>
       </div>
 
+      {/* ── Dirección elegida — Mix ───────────────────────────────────────── */}
+      <SectionTitle
+        kicker="Dirección elegida"
+        title="Mix · base Vault #2E0F70"
+        note="Inundación orange (iter3) + desplazamiento y barrita (iter1) + el icono cambia de color (iter4)."
+      />
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 72 }}>
+        {featured.map(function renderFeatured(theme) {
+          return (
+            <div key={theme.id} style={{ display: "flex", flexDirection: "column", alignItems: "center",
+              padding: 28, borderRadius: 20,
+              background: "color-mix(in oklch, var(--vmc-color-background-card) 60%, transparent)",
+              boxShadow: "0 0 0 1px color-mix(in oklch, oklch(0.72 0.16 55) 40%, transparent), 0 24px 60px -24px oklch(0.72 0.16 55 / 0.45)" }}>
+              <ChosenBadge />
+              <GambleSidebar theme={theme} />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Exploraciones previas ─────────────────────────────────────────── */}
+      <SectionTitle
+        kicker="Exploraciones previas"
+        title="8 variaciones de efecto · icon-set"
+        note="Iteraciones que llevaron al Mix. Mismo acento orange; varía el efecto hover/pressed y el set de iconos."
+      />
       <div style={{ display: "flex", flexWrap: "wrap", gap: 40, justifyContent: "center", alignItems: "flex-start" }}>
-        {THEMES.map(function renderTheme(theme, i) {
+        {explorations.map(function renderExploration(theme, i) {
           return (
             <div key={theme.id} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <IterationLabel index={i + 1} theme={theme} />
