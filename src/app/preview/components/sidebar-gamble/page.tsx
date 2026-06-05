@@ -239,6 +239,102 @@ const GAMBLE_CSS = `
     transform: scale(0.97) translateY(1px);
     box-shadow: inset 0 2px 5px rgb(0% 0% 0% / 0.22);
   }
+
+  /* ════ Mix · Magnetic — la fila se desliza fuerte + icono salta con imán (overshoot) ════ */
+  .fx-mix-magnetic .gs-item .gs-icon {
+    transition: transform 340ms cubic-bezier(0.34,1.56,0.64,1), stroke 180ms ease, filter 200ms ease;
+  }
+  .fx-mix-magnetic .gs-item:hover {
+    transform: translateX(7px);
+    background-image: linear-gradient(90deg,
+      color-mix(in oklch, var(--gs-accent) 30%, transparent) 0%,
+      color-mix(in oklch, var(--gs-accent) 8%, transparent) 60%,
+      transparent 100%);
+    box-shadow: inset 5px 0 0 0 var(--gs-accent), -14px 0 32px -10px var(--gs-glow);
+  }
+  .fx-mix-magnetic .gs-item:hover .gs-icon {
+    stroke: var(--gs-accent);
+    transform: translateX(4px) scale(1.28);
+    filter: drop-shadow(0 0 7px var(--gs-glow));
+  }
+  .fx-mix-magnetic .gs-item:active { transform: translateX(7px) scale(0.96); }
+  .fx-mix-magnetic .gs-item:active .gs-icon { transform: translateX(4px) scale(1.05); }
+  .fx-mix-magnetic .gs-sub:hover { transform: translateX(4px); }
+  .fx-mix-magnetic .sps-cta:hover {
+    transform: translateX(3px) translateY(-2px) scale(1.02);
+    box-shadow: -10px 8px 26px -8px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.28);
+  }
+  .fx-mix-magnetic .sps-cta:active { transform: scale(0.96); box-shadow: inset 0 2px 6px rgb(0% 0% 0% / 0.28); }
+
+  /* ════ Mix · Trace — la barrita se dibuja de arriba a abajo + contorno neón ════ */
+  .fx-mix-trace .gs-item::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background-image: var(--gs-grad);
+    box-shadow: 0 0 12px var(--gs-glow);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 360ms cubic-bezier(0.3,0,0,1);
+    pointer-events: none;
+  }
+  .fx-mix-trace .gs-item:hover::after { transform: scaleY(1); }
+  .fx-mix-trace .gs-item:hover {
+    transform: translateX(3px);
+    border-radius: 8px;
+    background-image: linear-gradient(90deg,
+      color-mix(in oklch, var(--gs-accent) 22%, transparent) 0%,
+      color-mix(in oklch, var(--gs-accent) 5%, transparent) 60%,
+      transparent 100%);
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--gs-accent) 60%, transparent),
+                0 0 22px -4px var(--gs-glow);
+  }
+  .fx-mix-trace .gs-item:hover .gs-icon { stroke: var(--gs-accent); filter: drop-shadow(0 0 5px var(--gs-glow)); }
+  .fx-mix-trace .gs-item:active {
+    transform: translateX(3px) scale(0.985);
+    box-shadow: inset 0 0 0 1.5px var(--gs-accent), inset 0 2px 6px rgb(0% 0% 0% / 0.3);
+  }
+  .fx-mix-trace .gs-sub:hover { transform: translateX(2px); }
+  .fx-mix-trace .sps-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--gs-accent) 75%, transparent),
+                0 9px 22px -6px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+  }
+  .fx-mix-trace .sps-cta:active { transform: scale(0.97); }
+
+  /* ════ Mix · Ripple — una onda se expande desde el icono al hover ════ */
+  .fx-mix-ripple .gs-item::after {
+    content: '';
+    position: absolute;
+    left: 6px; top: 50%;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in oklch, var(--gs-accent) 42%, transparent) 0%, transparent 70%);
+    transform: translateY(-50%) scale(0);
+    opacity: 0;
+    transition: transform 480ms cubic-bezier(0.3,0,0,1), opacity 480ms ease;
+    pointer-events: none;
+  }
+  .fx-mix-ripple .gs-item:hover::after { transform: translateY(-50%) scale(6); opacity: 1; }
+  .fx-mix-ripple .gs-item:hover {
+    transform: translateX(3px);
+    box-shadow: inset 3px 0 0 0 var(--gs-accent), -10px 0 26px -12px var(--gs-glow);
+  }
+  .fx-mix-ripple .gs-item:hover .gs-icon {
+    stroke: var(--gs-accent);
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 6px var(--gs-glow));
+  }
+  .fx-mix-ripple .gs-item:active { transform: translateX(3px) scale(0.985); }
+  .fx-mix-ripple .gs-item:active .gs-icon { transform: scale(0.92); }
+  .fx-mix-ripple .gs-sub:hover { transform: translateX(2px); }
+  .fx-mix-ripple .sps-cta:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 32px -2px var(--gs-glow), inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+  }
+  .fx-mix-ripple .sps-cta:active { transform: scale(0.96); box-shadow: inset 0 2px 6px rgb(0% 0% 0% / 0.25); }
+
   .gs-item--active { background-color: rgb(100% 100% 100% / 0.07); }
   .gs-item--active::before {
     content: '';
@@ -413,7 +509,7 @@ const GAMBLE_CSS = `
 
 /* ── Tipos ─────────────────────────────────────────────────────────────────── */
 interface GambleTheme {
-  id:       string;   // clave del set de iconos (ICON_SETS) + key React
+  id:       string;   // key React único
   fx:       string;   // clase del efecto hover/pressed (fx-*)
   name:     string;
   tagline:  string;
@@ -422,6 +518,7 @@ interface GambleTheme {
   glow:     string;
   accent:   string;
   bannerH?: number;   // alto del banner Subaspass dentro del sidebar
+  iconSet?: string;   // override del set de iconos (ICON_SETS); por defecto usa id
 }
 
 interface SubItem  { label: string; count: number; children?: SubItem[] }
@@ -557,6 +654,11 @@ function iconFor(themeId: string, label: string, fallback: string): string {
   return fallback;
 }
 
+function resolveIconSet(theme: GambleTheme): string {
+  if (theme.iconSet !== undefined) { return theme.iconSet; }
+  return theme.id;
+}
+
 /* ── Tono Vault — BLOQUEADO. Fondo idéntico en las 3 iteraciones. ────────────── */
 const VAULT_BG = "linear-gradient(180deg, oklch(0.21 0.16 285) 0%, oklch(0.15 0.12 285) 100%)";
 
@@ -629,6 +731,31 @@ const THEMES: GambleTheme[] = [
     id: "fx-mix", fx: "fx-mix",
     name: "Mix",
     tagline: "Base Vault #2E0F70 · inundación orange (iter3) + desplazamiento y barrita (iter1) + icono cambia de color (iter4)",
+    bg: MIX_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 300,
+  },
+];
+
+/* ── Variaciones de la dirección — mismo ADN del Mix + icon-set y animación propios ─ */
+const MIX_VARIATIONS: GambleTheme[] = [
+  {
+    id: "fx-mix-magnetic", fx: "fx-mix-magnetic", iconSet: "set-subasta",
+    name: "Mix · Magnetic",
+    tagline: "Iconos de subasta · la fila se desliza fuerte y el icono salta con imán (overshoot)",
+    bg: MIX_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 300,
+  },
+  {
+    id: "fx-mix-trace", fx: "fx-mix-trace", iconSet: "set-comercio",
+    name: "Mix · Trace",
+    tagline: "Iconos comerciales · la barrita se dibuja de arriba a abajo + contorno neón",
+    bg: MIX_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
+    bannerH: 300,
+  },
+  {
+    id: "fx-mix-ripple", fx: "fx-mix-ripple", iconSet: "fx-pulse",
+    name: "Mix · Ripple",
+    tagline: "Iconos energéticos · una onda orange se expande desde el icono al hover",
     bg: MIX_BG, grad: ORANGE_GRAD, glow: ORANGE_GLOW, accent: ORANGE_ACCENT,
     bannerH: 300,
   },
@@ -760,7 +887,7 @@ function GambleSidebar({ theme }: SidebarProps): JSX.Element {
                 role="button" tabIndex={0}
                 onClick={function onClick() { handleSelect(entry); }}
               >
-                <NavIcon path={iconFor(theme.id, entry.label, entry.iconPath)} active={isActive} />
+                <NavIcon path={iconFor(resolveIconSet(theme), entry.label, entry.iconPath)} active={isActive} />
                 <span className={isActive ? "gs-label gs-label--active" : "gs-label"}>{entry.label}</span>
                 <ChevronIcon open={showChildren} />
               </div>
@@ -837,12 +964,12 @@ function SubaspassBanner({ height, fluid = false }: BannerProps): JSX.Element {
 }
 
 /* ── Etiqueta de iteración ─────────────────────────────────────────────────────── */
-function IterationLabel({ index, theme }: { index: number; theme: GambleTheme }): JSX.Element {
+function IterationLabel({ index, theme, prefix = "Iteración" }: { index: number; theme: GambleTheme; prefix?: string }): JSX.Element {
   return (
     <div style={{ marginBottom: 14, textAlign: "center", maxWidth: 260 }}>
       <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.10em",
         textTransform: "uppercase", color: "var(--vmc-color-text-primary)", margin: "0 0 2px" }}>
-        Iteración {index} · {theme.name}
+        {prefix} {index} · {theme.name}
       </p>
       <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 500,
         color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
@@ -923,6 +1050,23 @@ export default function SidebarGamblePreviewPage(): JSX.Element {
               background: "color-mix(in oklch, var(--vmc-color-background-card) 60%, transparent)",
               boxShadow: "0 0 0 1px color-mix(in oklch, oklch(0.72 0.16 55) 40%, transparent), 0 24px 60px -24px oklch(0.72 0.16 55 / 0.45)" }}>
               <ChosenBadge />
+              <GambleSidebar theme={theme} />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Variaciones de la dirección ───────────────────────────────────── */}
+      <SectionTitle
+        kicker="Variaciones de la dirección"
+        title="3 toques sobre el Mix · base #2E0F70"
+        note="Mismo ADN del Mix elegido (inundación + barrita + icono que cambia de color). Cada una suma un detalle sin salirse de lo establecido."
+      />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 40, justifyContent: "center", alignItems: "flex-start", marginBottom: 72 }}>
+        {MIX_VARIATIONS.map(function renderMixVariation(theme, i) {
+          return (
+            <div key={theme.id} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <IterationLabel index={i + 1} theme={theme} prefix="Variación" />
               <GambleSidebar theme={theme} />
             </div>
           );
