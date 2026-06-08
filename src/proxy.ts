@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
- * Auth middleware — runs in Edge Runtime, evaluates cookies BEFORE the router.
+ * Auth proxy — runs in Edge Runtime, evaluates cookies BEFORE the router.
+ * (Next.js 16: el convención `middleware` fue renombrada a `proxy`.)
  *
  * This is the ONLY place where auth validation for route protection lives.
  * NEVER use Redux client-side for route auth — it causes a flash where the
@@ -47,7 +48,7 @@ function isPublicPathname(pathname: string): boolean {
   return false;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Todo lo de Next (chunks, HMR, etc.) y APIs — sin lógica de auth aquí
@@ -80,7 +81,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Igual que la plantilla Next: no ejecutar middleware en api, estáticos de
+     * Igual que la plantilla Next: no ejecutar proxy en api, estáticos de
      * Next ni favicon (evita interferir con chunks / RSC / imágenes).
      */
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
