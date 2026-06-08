@@ -469,139 +469,121 @@ const TV_CSS = `
   }
 `;
 
-/* ── CSS experimental — 3 layouts con animación protagonista ──────────────── */
+/* ── CSS de 3 sidebars NUEVOS — solo tipografía + colores en común ─────────── */
 const TV_FX_CSS = `
-  @property --tvx-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-
-  /* ════ EXPERIMENTAL · GLIDE — un highlight neón se desliza al item activo ════ */
-  .tvx-glide-nav { position: relative; padding: 8px; }
-  .tvx-glide {
-    position: absolute;
-    left: 8px; right: 8px; top: 8px;
-    height: 48px;
-    border-radius: 10px;
-    background-image: linear-gradient(90deg,
-      color-mix(in oklch, var(--tv-accent) 26%, transparent) 0%,
-      color-mix(in oklch, var(--tv-accent) 6%, transparent) 70%,
-      transparent 100%);
-    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--tv-accent) 55%, transparent),
-                0 0 22px -4px var(--tv-glow);
-    transition: transform 460ms cubic-bezier(0.34,1.3,0.5,1);
-    z-index: 0;
-    pointer-events: none;
+  /* ════ NUEVO · BENTO — grid de tiles desplegables ════ */
+  .tvx-bento-wrap { padding: 12px; }
+  .tvx-bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tvx-tile {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
+    height: 96px; padding: 12px;
+    border-radius: 14px; cursor: pointer;
+    background: rgb(100% 100% 100% / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.10);
+    transition: transform 180ms cubic-bezier(0.25,0.8,0.25,1), box-shadow 220ms ease, background 220ms ease;
   }
-  .tvx-glide::before {
-    content: ''; position: absolute;
-    left: 0; top: 8px; bottom: 8px; width: 3px;
-    border-radius: 0 3px 3px 0;
-    background-image: var(--tv-grad);
-    box-shadow: 0 0 12px var(--tv-glow);
+  .tvx-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tv-accent) 40%, transparent), 0 10px 22px -8px var(--tv-glow);
   }
-  .tvx-gitem {
-    position: relative; z-index: 1;
-    display: flex; align-items: center; gap: 13px;
-    height: 48px; padding: 0 14px;
-    cursor: pointer; border-radius: 10px;
-    transition: transform 200ms ease;
+  .tvx-tile--active {
+    background-image: linear-gradient(150deg, color-mix(in oklch, var(--tv-accent) 28%, transparent) 0%, color-mix(in oklch, var(--tv-accent) 6%, transparent) 100%);
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--tv-accent) 55%, transparent), 0 12px 26px -8px var(--tv-glow);
   }
-  .tvx-gitem:hover { transform: translateX(3px); }
-  .tvx-gitem .tv-icon { transition: transform 320ms cubic-bezier(0.34,1.56,0.64,1), stroke 200ms ease, filter 200ms ease; }
-  .tvx-gitem:hover .tv-icon { transform: scale(1.16) rotate(-8deg); }
-  .tvx-glabel { flex: 1; font-size: 14px; color: rgb(100% 100% 100% / 0.78); }
-  .tvx-gitem--active .tvx-glabel { color: var(--vmc-color-base-white, #fff); font-weight: 700; }
-  .tvx-gitem--active .tv-icon { stroke: var(--vmc-color-base-white, #fff); filter: drop-shadow(0 0 6px var(--tv-glow)); }
-
-  /* ════ EXPERIMENTAL · ACCORDION — cada item se expande con altura animada ════ */
-  .tvx-acc-nav { padding: 8px 12px 0; }
-  .tvx-acc {
-    margin: 6px 0; border-radius: 12px; overflow: hidden;
-    background: rgb(100% 100% 100% / 0.04);
-    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.08);
-    transition: box-shadow 280ms ease, background 280ms ease;
-  }
-  .tvx-acc--open {
-    background: rgb(100% 100% 100% / 0.06);
-    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--tv-accent) 50%, transparent),
-                0 0 22px -6px var(--tv-glow);
-  }
-  .tvx-acc-head { position: relative; display: flex; align-items: center; gap: 12px; height: 50px; padding: 0 14px; cursor: pointer; }
-  .tvx-acc-head::after {
-    content: ''; position: absolute;
-    left: 0; top: 0; bottom: 0; width: 3px;
-    background-image: var(--tv-grad);
-    box-shadow: 0 0 12px var(--tv-glow);
-    transform: scaleY(0); transform-origin: top;
-    transition: transform 380ms cubic-bezier(0.3,0,0,1);
-  }
-  .tvx-acc--open .tvx-acc-head::after { transform: scaleY(1); }
-  .tvx-acc-ic {
-    flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px;
+  .tvx-tile-ic {
+    width: 34px; height: 34px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    background: color-mix(in oklch, var(--tv-accent) 12%, rgb(100% 100% 100% / 0.05));
+    background: rgb(100% 100% 100% / 0.08);
     transition: background 200ms ease;
   }
-  .tvx-acc--open .tvx-acc-ic { background: color-mix(in oklch, var(--tv-accent) 26%, transparent); }
-  .tvx-acc-label { flex: 1; font-size: 14px; font-weight: 600; color: rgb(100% 100% 100% / 0.86); }
-  .tvx-acc-body {
+  .tvx-tile--active .tvx-tile-ic { background: color-mix(in oklch, var(--tv-accent) 30%, transparent); }
+  .tvx-tile-foot { display: flex; flex-direction: column; gap: 1px; }
+  .tvx-tile-label { font-size: 13px; font-weight: 700; line-height: 1.15; color: var(--vmc-color-base-white, #fff); }
+  .tvx-tile-count { font-size: 11px; color: rgb(100% 100% 100% / 0.55); }
+  .tvx-tile--active .tvx-tile-count { color: var(--tv-accent); font-weight: 700; }
+  .tvx-bento-row {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 11px;
+    height: 48px; margin-top: 10px; padding: 0 14px;
+    border-radius: 12px; cursor: pointer;
+    background: rgb(100% 100% 100% / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.10);
+    transition: transform 150ms ease, box-shadow 200ms ease;
+  }
+  .tvx-bento-row:hover { transform: translateX(2px); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tv-accent) 40%, transparent); }
+  .tvx-bento-row--active { background-image: linear-gradient(90deg, color-mix(in oklch, var(--tv-accent) 22%, transparent) 0%, transparent 75%); }
+  .tvx-bento-row-label { flex: 1; font-size: 13px; color: rgb(100% 100% 100% / 0.82); }
+  /* Panel desplegable del tile activo */
+  .tvx-bento-panel { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 360ms cubic-bezier(0.3,0,0,1), opacity 280ms ease, margin-top 280ms ease; }
+  .tvx-bento-panel--open { max-height: 280px; opacity: 1; margin-top: 10px; }
+  .tvx-bento-panel-inner { border-radius: 12px; padding: 6px; background: rgb(0% 0% 0% / 0.18); box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.08); }
+  .tvx-bento-panel-title { font-size: 10px; font-weight: 800; letter-spacing: 0.10em; text-transform: uppercase; color: var(--tv-accent); padding: 6px 10px 4px; }
+  .tvx-bento-sub { display: flex; align-items: center; justify-content: space-between; height: 38px; padding: 0 10px; border-radius: 8px; cursor: pointer; font-size: 13px; color: rgb(100% 100% 100% / 0.78); transition: background 150ms ease, transform 150ms ease, color 150ms ease; }
+  .tvx-bento-sub:hover { background: rgb(100% 100% 100% / 0.05); transform: translateX(2px); color: var(--vmc-color-base-white, #fff); }
+  .tvx-bento-sub span { font-size: 12px; color: rgb(100% 100% 100% / 0.42); font-variant-numeric: tabular-nums; }
+
+  /* ════ NUEVO · TREE — explorador jerárquico con carets + guías ════ */
+  .tvx-tree-nav { padding: 8px 10px 0; }
+  .tvx-trow {
+    position: relative; display: flex; align-items: center; gap: 8px;
+    height: 38px; padding: 0 8px; border-radius: 8px; cursor: pointer;
+    transition: background 150ms ease, transform 150ms ease, box-shadow 200ms ease;
+  }
+  .tvx-trow:hover { background: rgb(100% 100% 100% / 0.05); }
+  .tvx-trow:hover .tv-icon { stroke: var(--tv-accent); }
+  .tvx-trow--active {
+    background-image: linear-gradient(90deg, color-mix(in oklch, var(--tv-accent) 20%, transparent) 0%, transparent 75%);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tv-accent) 38%, transparent);
+  }
+  .tvx-tspace { width: 14px; flex-shrink: 0; }
+  .tvx-tlabel { flex: 1; font-size: 13px; color: rgb(100% 100% 100% / 0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tvx-trow--active .tvx-tlabel { color: var(--vmc-color-base-white, #fff); font-weight: 600; }
+  .tvx-tcount { flex-shrink: 0; font-size: 11px; color: rgb(100% 100% 100% / 0.4); font-variant-numeric: tabular-nums; }
+  .tvx-tchildren { position: relative; }
+  .tvx-tchildren::before { content: ''; position: absolute; left: 16px; top: 0; bottom: 6px; width: 1px; background: rgb(100% 100% 100% / 0.10); }
+
+  /* ════ NUEVO · DRAWER — fila que abre un cajón con chips + sublinks ════ */
+  .tvx-dr-nav { padding: 8px 12px 0; }
+  .tvx-dr { margin: 6px 0; }
+  .tvx-dr-head {
+    position: relative; display: flex; align-items: center; gap: 12px;
+    height: 48px; padding: 0 14px; border-radius: 11px; cursor: pointer;
+    background: rgb(100% 100% 100% / 0.04);
+    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.08);
+    transition: background 220ms ease, box-shadow 220ms ease, transform 150ms ease, border-radius 220ms ease;
+  }
+  .tvx-dr-head:hover { transform: translateX(2px); }
+  .tvx-dr-head:hover .tv-icon { stroke: var(--tv-accent); }
+  .tvx-dr--open .tvx-dr-head {
+    background-image: linear-gradient(90deg, color-mix(in oklch, var(--tv-accent) 22%, transparent) 0%, transparent 80%);
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--tv-accent) 50%, transparent), 0 0 20px -6px var(--tv-glow);
+    border-radius: 11px 11px 0 0;
+  }
+  .tvx-dr-label { flex: 1; font-size: 14px; font-weight: 600; color: rgb(100% 100% 100% / 0.86); }
+  .tvx-dr--open .tvx-dr-label { color: var(--vmc-color-base-white, #fff); }
+  .tvx-dr-body {
     max-height: 0; opacity: 0; overflow: hidden;
-    transition: max-height 400ms cubic-bezier(0.3,0,0,1), opacity 300ms ease;
+    border-radius: 0 0 11px 11px;
+    background: rgb(0% 0% 0% / 0.2);
+    transition: max-height 380ms cubic-bezier(0.3,0,0,1), opacity 300ms ease;
   }
-  .tvx-acc--open .tvx-acc-body { max-height: 240px; opacity: 1; padding-bottom: 6px; }
-  .tvx-acc-desc { font-size: 12px; color: rgb(100% 100% 100% / 0.58); margin: 0; padding: 2px 14px 6px 58px; }
-  .tvx-acc-link {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 34px; padding: 0 14px 0 58px;
-    font-size: 13px; color: rgb(100% 100% 100% / 0.74); cursor: pointer;
-    transition: background 150ms ease, transform 150ms ease, color 150ms ease;
+  .tvx-dr--open .tvx-dr-body { max-height: 260px; opacity: 1; box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.06); }
+  .tvx-dr-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 4px; }
+  .tvx-chip {
+    font-size: 11px; font-weight: 600; color: rgb(100% 100% 100% / 0.78);
+    padding: 5px 10px; border-radius: 999px; cursor: pointer;
+    background: rgb(100% 100% 100% / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.12);
+    transition: background 150ms ease, box-shadow 150ms ease, color 150ms ease;
   }
-  .tvx-acc-link:hover { background: rgb(100% 100% 100% / 0.05); transform: translateX(3px); color: var(--vmc-color-base-white, #fff); }
-  .tvx-acc-link span { font-size: 12px; color: rgb(100% 100% 100% / 0.42); }
+  .tvx-chip:hover { color: var(--vmc-color-base-white, #fff); background: color-mix(in oklch, var(--tv-accent) 24%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tv-accent) 50%, transparent); }
+  .tvx-dr-links { padding: 4px 6px 8px; }
+  .tvx-dr-link { display: flex; align-items: center; justify-content: space-between; height: 32px; padding: 0 12px; border-radius: 7px; cursor: pointer; font-size: 13px; color: rgb(100% 100% 100% / 0.74); transition: background 150ms ease, transform 150ms ease, color 150ms ease; }
+  .tvx-dr-link:hover { background: rgb(100% 100% 100% / 0.05); transform: translateX(2px); color: var(--vmc-color-base-white, #fff); }
+  .tvx-dr-link span { font-size: 12px; color: rgb(100% 100% 100% / 0.42); }
 
-  /* ════ EXPERIMENTAL · AURORA — fondo aurora animado + borde cónico que gira ════ */
-  .tv--aurora .tv-brand, .tv--aurora .tvx-aur-nav, .tv--aurora .tv-cta-wrap { position: relative; z-index: 1; }
-  .tvx-aurora-bg {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
-    background:
-      radial-gradient(60% 40% at 20% 8%,  oklch(0.50 0.20 300 / 0.55), transparent 60%),
-      radial-gradient(50% 40% at 92% 28%, oklch(0.58 0.18 42 / 0.45),  transparent 60%),
-      radial-gradient(70% 50% at 50% 102%, oklch(0.46 0.20 280 / 0.55), transparent 60%);
-    background-size: 180% 180%;
-    animation: tvx-aurora 14s ease-in-out infinite;
-  }
-  @keyframes tvx-aurora { 0%,100% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } }
-  .tvx-aur-nav { padding: 8px 12px 0; }
-  .tvx-aitem { position: relative; margin: 6px 0; height: 50px; display: flex; border-radius: 13px; }
-  .tvx-aitem::before {
-    content: ''; position: absolute; inset: 0;
-    border-radius: 13px; padding: 1.5px;
-    background: conic-gradient(from var(--tvx-ang),
-      transparent 0deg,
-      color-mix(in oklch, var(--tv-accent) 85%, transparent) 90deg,
-      transparent 180deg,
-      color-mix(in oklch, var(--tv-accent) 45%, transparent) 270deg,
-      transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    opacity: 0.30; transition: opacity 250ms ease;
-  }
-  .tvx-aitem:hover::before, .tvx-aitem--active::before { opacity: 1; animation: tvx-spin 4s linear infinite; }
-  @keyframes tvx-spin { to { --tvx-ang: 360deg; } }
-  .tvx-aitem-inner {
-    position: relative; z-index: 1; flex: 1;
-    display: flex; align-items: center; gap: 12px; padding: 0 14px;
-    border-radius: 11px;
-    background: oklch(0.20 0.15 285 / 0.72);
-    backdrop-filter: blur(6px);
-    cursor: pointer;
-  }
-  .tvx-alabel { flex: 1; font-size: 14px; color: rgb(100% 100% 100% / 0.82); }
-  .tvx-aitem--active .tvx-alabel { color: var(--vmc-color-base-white, #fff); font-weight: 700; }
-  .tvx-aitem:hover .tv-icon, .tvx-aitem--active .tv-icon { stroke: var(--vmc-color-base-white, #fff); filter: drop-shadow(0 0 5px var(--tv-glow)); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tvx-glide { transition: none; }
-    .tvx-aurora-bg, .tvx-aitem::before { animation: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .tvx-bento-panel, .tvx-dr-body { transition: none; } }
 `;
 
 /* ── Tipos ─────────────────────────────────────────────────────────────────── */
@@ -967,100 +949,199 @@ function BrandBlock(): JSX.Element {
   );
 }
 
-/* ── EXPERIMENTAL · Glide ─────────────────────────────────────────────────── */
-function GlideSidebar(): JSX.Element {
-  const [activeIdx, setActiveIdx] = useState<number>(3);
-  const glideStyle: CSSProperties = { transform: "translateY(" + activeIdx * 48 + "px)" };
+function activeClass(base: string, mod: string, on: boolean): string {
+  if (on) { return base + " " + mod; }
+  return base;
+}
 
-  function renderGItem(entry: NavEntry, i: number): JSX.Element {
-    const isActive = i === activeIdx;
-    function handlePick(): void { setActiveIdx(i); }
+/* ── NUEVO · Tree — explorador jerárquico (multi-nivel) ───────────────────── */
+interface TreeItem { label: string; count?: number; children?: TreeItem[] }
+const TREE_NAV: TreeItem[] = [
+  { label: "Hoy" },
+  { label: "Tipo de oferta", children: [
+    { label: "En vivo", count: 38 },
+    { label: "Negociable", count: 2 },
+  ] },
+  { label: "Categorías", children: [
+    { label: "Equipos diversos", count: 4, children: [
+      { label: "Laptops", count: 1 },
+      { label: "Motores", count: 1 },
+    ] },
+    { label: "Vehicular", count: 35, children: [
+      { label: "Liviano", count: 35, children: [
+        { label: "Siniestrado", count: 7 },
+        { label: "Seminuevo", count: 28 },
+      ] },
+    ] },
+    { label: "Mobiliario", count: 1 },
+  ] },
+  { label: "Empresas", children: [
+    { label: "Autoplan", count: 6 },
+    { label: "Maquisistema", count: 7 },
+    { label: "Pacífico", count: 6 },
+  ] },
+  { label: "Centro de ayuda" },
+];
+
+function TreeSidebar(): JSX.Element {
+  const [open, setOpen] = useState<Set<string>>(new Set(["Categorías", "Vehicular", "Liviano"]));
+  const [active, setActive] = useState<string>("Seminuevo");
+
+  function toggle(label: string): void {
+    const next = new Set(open);
+    if (next.has(label)) { next.delete(label); } else { next.add(label); }
+    setOpen(next);
+  }
+
+  function renderNode(item: TreeItem, depth: number): JSX.Element {
+    const hasChildren = item.children !== undefined;
+    const isOpen = open.has(item.label);
+    const isActive = active === item.label;
+    const rowStyle: CSSProperties = { paddingLeft: 8 + depth * 16 };
+    function handleClick(): void {
+      if (hasChildren) { toggle(item.label); } else { setActive(item.label); }
+    }
+    function renderChild(child: TreeItem): JSX.Element { return renderNode(child, depth + 1); }
     return (
-      <div key={entry.label} className={isActive ? "tvx-gitem tvx-gitem--active" : "tvx-gitem"}
-        role="button" tabIndex={0} onClick={handlePick}>
-        <NavIcon path={iconFor("energetic", entry.label, entry.iconPath)} active={isActive} />
-        <span className="tvx-glabel">{entry.label}</span>
+      <div key={item.label}>
+        <div className={activeClass("tvx-trow", "tvx-trow--active", isActive)} style={rowStyle}
+          role="button" tabIndex={0} onClick={handleClick}>
+          {hasChildren && <ChevronIcon open={isOpen} />}
+          {!hasChildren && <span className="tvx-tspace" />}
+          {depth === 0 && <NavIcon path={iconFor("lineal", item.label, "")} active={isActive} />}
+          <span className="tvx-tlabel">{item.label}</span>
+          {item.count !== undefined && <span className="tvx-tcount">{item.count}</span>}
+        </div>
+        {hasChildren && isOpen && <div className="tvx-tchildren">{item.children!.map(renderChild)}</div>}
       </div>
     );
   }
+  function renderTop(item: TreeItem): JSX.Element { return renderNode(item, 0); }
 
   return (
-    <aside className="tv-root tv--glide" style={fxRootStyle()} aria-label="Navegación principal">
+    <aside className="tv-root tv--tree" style={fxRootStyle()} aria-label="Navegación principal">
       <BrandBlock />
-      <nav className="tvx-glide-nav" aria-label="Menú principal">
-        <span className="tvx-glide" style={glideStyle} aria-hidden />
-        {NAV.map(renderGItem)}
-      </nav>
-      <div className="tv-cta-wrap"><SubaspassBanner height={300} /></div>
+      <nav className="tvx-tree-nav" aria-label="Menú principal">{TREE_NAV.map(renderTop)}</nav>
+      <div className="tv-cta-wrap"><SubaspassBanner height={260} /></div>
     </aside>
   );
 }
 
-/* ── EXPERIMENTAL · Accordion ─────────────────────────────────────────────── */
-function AccordionSidebar(): JSX.Element {
-  const [openLabel, setOpenLabel] = useState<string | null>("Empresas");
+/* ── Bento — grid de tiles + panel desplegable del tile activo ────────────── */
+function BentoSidebar(): JSX.Element {
+  const [active, setActive] = useState<string>("Empresas");
 
-  function renderLink(sub: SubItem): JSX.Element {
+  function countText(entry: NavEntry): string {
+    if (entry.children !== undefined) { return entry.children.length + " ofertas"; }
+    return "Acceso directo";
+  }
+  function isMain(entry: NavEntry): boolean { return entry.section === undefined; }
+  function isSupport(entry: NavEntry): boolean { return entry.section !== undefined; }
+  function byActive(entry: NavEntry): boolean { return entry.label === active; }
+
+  function renderTile(entry: NavEntry): JSX.Element {
+    const isActive = active === entry.label;
+    function handlePick(): void { setActive(entry.label); }
     return (
-      <div key={sub.label} className="tvx-acc-link" role="button" tabIndex={0}>
-        {sub.label}<span>({sub.count})</span>
+      <div key={entry.label} className={activeClass("tvx-tile", "tvx-tile--active", isActive)}
+        role="button" tabIndex={0} onClick={handlePick}>
+        <span className="tvx-tile-ic"><NavIcon path={iconFor("comercio", entry.label, entry.iconPath)} active={isActive} /></span>
+        <span className="tvx-tile-foot">
+          <span className="tvx-tile-label">{entry.label}</span>
+          <span className="tvx-tile-count">{countText(entry)}</span>
+        </span>
+      </div>
+    );
+  }
+  function renderRow(entry: NavEntry): JSX.Element {
+    const isActive = active === entry.label;
+    function handlePick(): void { setActive(entry.label); }
+    return (
+      <div key={entry.label} className={activeClass("tvx-bento-row", "tvx-bento-row--active", isActive)}
+        role="button" tabIndex={0} onClick={handlePick}>
+        <NavIcon path={iconFor("comercio", entry.label, entry.iconPath)} active={isActive} />
+        <span className="tvx-bento-row-label">{entry.label}</span>
+        <ChevronIcon open={false} />
+      </div>
+    );
+  }
+  function renderSub(sub: SubItem): JSX.Element {
+    return (
+      <div key={sub.label} className="tvx-bento-sub" role="button" tabIndex={0}>
+        {sub.label}<span>{sub.count}</span>
       </div>
     );
   }
 
-  function renderAcc(entry: NavEntry): JSX.Element {
+  const tiles = NAV.filter(isMain);
+  const rows = NAV.filter(isSupport);
+  const current = NAV.find(byActive);
+  let panelKids: SubItem[] = [];
+  let panelTitle = "";
+  if (current !== undefined) {
+    panelTitle = current.label;
+    if (current.children !== undefined) { panelKids = current.children; }
+  }
+  const panelOpen = panelKids.length > 0;
+
+  return (
+    <aside className="tv-root tv--bento" style={fxRootStyle()} aria-label="Navegación principal">
+      <BrandBlock />
+      <div className="tvx-bento-wrap">
+        <div className="tvx-bento-grid">{tiles.map(renderTile)}</div>
+        {rows.map(renderRow)}
+        <div className={activeClass("tvx-bento-panel", "tvx-bento-panel--open", panelOpen)}>
+          <div className="tvx-bento-panel-inner">
+            <div className="tvx-bento-panel-title">{panelTitle}</div>
+            {panelKids.map(renderSub)}
+          </div>
+        </div>
+      </div>
+      <div className="tv-cta-wrap"><SubaspassBanner height={260} /></div>
+    </aside>
+  );
+}
+
+/* ── NUEVO · Drawer — la fila abre un cajón con chips de acción + sublinks ── */
+const DRAWER_CHIPS: string[] = ["Ver todo", "En vivo", "Negociable", "Recientes"];
+function DrawerSidebar(): JSX.Element {
+  const [openLabel, setOpenLabel] = useState<string | null>("Empresas");
+
+  function renderChip(text: string): JSX.Element {
+    return <span key={text} className="tvx-chip" role="button" tabIndex={0}>{text}</span>;
+  }
+  function renderLink(sub: SubItem): JSX.Element {
+    return (
+      <div key={sub.label} className="tvx-dr-link" role="button" tabIndex={0}>
+        {sub.label}<span>({sub.count})</span>
+      </div>
+    );
+  }
+  function renderDr(entry: NavEntry): JSX.Element {
     const isOpen = openLabel === entry.label;
     function handleHead(): void {
       if (isOpen) { setOpenLabel(null); } else { setOpenLabel(entry.label); }
     }
     return (
-      <div key={entry.label} className={isOpen ? "tvx-acc tvx-acc--open" : "tvx-acc"}>
-        <div className="tvx-acc-head" role="button" tabIndex={0} onClick={handleHead}>
-          <span className="tvx-acc-ic"><NavIcon path={iconFor("comercio", entry.label, entry.iconPath)} active={isOpen} /></span>
-          <span className="tvx-acc-label">{entry.label}</span>
+      <div key={entry.label} className={activeClass("tvx-dr", "tvx-dr--open", isOpen)}>
+        <div className="tvx-dr-head" role="button" tabIndex={0} onClick={handleHead}>
+          <NavIcon path={iconFor("comercio", entry.label, entry.iconPath)} active={isOpen} />
+          <span className="tvx-dr-label">{entry.label}</span>
           <ChevronIcon open={isOpen} />
         </div>
-        <div className="tvx-acc-body">
-          {entry.sub !== undefined && <p className="tvx-acc-desc">{entry.sub}</p>}
-          {entry.children !== undefined && entry.children.map(renderLink)}
-          {entry.children === undefined && <p className="tvx-acc-desc">Acceso directo · sin subcategorías.</p>}
+        <div className="tvx-dr-body">
+          <div className="tvx-dr-chips">{DRAWER_CHIPS.map(renderChip)}</div>
+          {entry.children !== undefined && <div className="tvx-dr-links">{entry.children.map(renderLink)}</div>}
         </div>
       </div>
     );
   }
 
   return (
-    <aside className="tv-root tv--accordion" style={fxRootStyle()} aria-label="Navegación principal">
+    <aside className="tv-root tv--drawer" style={fxRootStyle()} aria-label="Navegación principal">
       <BrandBlock />
-      <nav className="tvx-acc-nav" aria-label="Menú principal">{NAV.map(renderAcc)}</nav>
-      <div className="tv-cta-wrap"><SubaspassBanner height={280} /></div>
-    </aside>
-  );
-}
-
-/* ── EXPERIMENTAL · Aurora ────────────────────────────────────────────────── */
-function AuroraSidebar(): JSX.Element {
-  const [active, setActive] = useState<string>("Empresas");
-
-  function renderAItem(entry: NavEntry): JSX.Element {
-    const isActive = active === entry.label;
-    function handlePick(): void { setActive(entry.label); }
-    return (
-      <div key={entry.label} className={isActive ? "tvx-aitem tvx-aitem--active" : "tvx-aitem"}>
-        <div className="tvx-aitem-inner" role="button" tabIndex={0} onClick={handlePick}>
-          <NavIcon path={iconFor("subasta", entry.label, entry.iconPath)} active={isActive} />
-          <span className="tvx-alabel">{entry.label}</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <aside className="tv-root tv--aurora" style={fxRootStyle()} aria-label="Navegación principal">
-      <span className="tvx-aurora-bg" aria-hidden />
-      <BrandBlock />
-      <nav className="tvx-aur-nav" aria-label="Menú principal">{NAV.map(renderAItem)}</nav>
-      <div className="tv-cta-wrap"><SubaspassBanner height={300} /></div>
+      <nav className="tvx-dr-nav" aria-label="Menú principal">{NAV.map(renderDr)}</nav>
+      <div className="tv-cta-wrap"><SubaspassBanner height={240} /></div>
     </aside>
   );
 }
@@ -1071,7 +1152,7 @@ function FxLabel({ index, name, tagline }: { index: number; name: string; taglin
     <div style={{ marginBottom: 14, textAlign: "center", maxWidth: 240 }}>
       <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 800, letterSpacing: "0.10em",
         textTransform: "uppercase", color: "var(--vmc-color-text-primary)", margin: "0 0 2px" }}>
-        Experimental {index} · {name}
+        Propuesta {index} · {name}
       </p>
       <p style={{ fontFamily: FD, fontSize: 11, fontWeight: 500,
         color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
@@ -1129,7 +1210,7 @@ export default function SidebarTraceVariantsPage(): JSX.Element {
       <div style={{ maxWidth: 1180, margin: "0 auto 40px" }}>
         <h1 style={{ fontFamily: FD, fontSize: 22, fontWeight: 800, margin: "0 0 4px",
           color: "var(--vmc-color-text-primary)" }}>
-          Sidebar · 9 diseños + 3 experimentales sobre <b>Mix · Trace</b>
+          Sidebar · 9 diseños Trace + 3 propuestas nuevas
         </h1>
         <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary)", margin: 0 }}>
           Mismo ADN Trace — base Vault <b>#2E0F70</b>, acento orange, barrita que se dibuja + contorno neón.
@@ -1154,26 +1235,26 @@ export default function SidebarTraceVariantsPage(): JSX.Element {
         })}
       </div>
 
-      {/* ── Experimental · animación + layout ──────────────────────────────── */}
+      {/* ── Propuestas nuevas · otro tipo de sidebar ───────────────────────── */}
       <div style={{ maxWidth: 1180, margin: "72px auto 0" }}>
         <SectionTitle
-          kicker="Experimental"
-          title="3 layouts con la animación de protagonista"
-          note="Cambio total de estructura y movimiento, misma paleta Trace. Glide (highlight que se desliza) · Accordion (altura animada) · Aurora (fondo animado + borde cónico que gira)."
+          kicker="Propuestas nuevas"
+          title="3 sidebars de otro tipo · misma tipografía y colores"
+          note="Estructura distinta, conservando Plus Jakarta Sans + paleta Vault/orange. Tree (explorador multinivel) · Bento (grid de tiles que despliega panel) · Drawer (fila que abre cajón con chips + sublinks)."
         />
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 44, justifyContent: "center", alignItems: "flex-start" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <FxLabel index={1} name="Trace · Glide" tagline="Un highlight neón se desliza al item activo + icono que rota" />
-          <GlideSidebar />
+          <FxLabel index={1} name="Tree" tagline="Explorador jerárquico con carets, guías e indentación (multinivel)" />
+          <TreeSidebar />
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <FxLabel index={2} name="Trace · Accordion" tagline="Cada item se expande con altura animada + sublinks" />
-          <AccordionSidebar />
+          <FxLabel index={2} name="Bento" tagline="Tiles que al activarse despliegan un panel con sus subniveles" />
+          <BentoSidebar />
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <FxLabel index={3} name="Trace · Aurora" tagline="Fondo aurora animado + borde cónico que gira" />
-          <AuroraSidebar />
+          <FxLabel index={3} name="Drawer" tagline="La fila abre un cajón animado con chips de acción + sublinks" />
+          <DrawerSidebar />
         </div>
       </div>
     </main>
