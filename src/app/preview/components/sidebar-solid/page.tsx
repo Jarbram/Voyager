@@ -388,18 +388,56 @@ const GLASS_CSS = `
     min-height: 560px;
     display: flex;
     flex-direction: column;
-    border-radius: 26px;
+    border-radius: 0;
     overflow: hidden;
     font-family: ${FD};
-    backdrop-filter: blur(30px) saturate(1.6);
-    -webkit-backdrop-filter: blur(30px) saturate(1.6);
   }
+  /* Fondo sólido del sidebar — nuestro color (capa roja del boceto) */
   .gl-root--dark {
-    background: color-mix(in srgb, ${SOLID_BG} 62%, transparent);
-    border: 1px solid rgb(100% 100% 100% / 0.14);
-    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.14), 0 30px 60px -20px rgb(0% 0% 0% / 0.55);
+    background: color-mix(in srgb, ${SOLID_BG} 80%, #000);
+    border: 1px solid rgb(100% 100% 100% / 0.10);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.08), 0 30px 60px -20px rgb(0% 0% 0% / 0.55);
+  }
+
+  /* Capa glass que va ENCIMA del fondo sólido (capa azul del boceto) */
+  .gl-glass {
+    position: relative;
+    z-index: 1;
+    margin: 6px 12px 12px;
+    border-radius: 16px;
+    padding: 6px;
+    background: rgb(100% 100% 100% / 0.07);
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    border: 1px solid rgb(100% 100% 100% / 0.12);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.12), 0 14px 30px -14px rgb(0% 0% 0% / 0.5);
+  }
+  .gl-root--collapsed .gl-glass { margin: 6px 8px 10px; padding: 4px; }
+
+  /* ── Orbs: luz detrás del glass para que el blur refracte ─────────────── */
+  .gl-orb {
+    position: absolute; z-index: 0;
+    border-radius: 50%;
+    filter: blur(44px);
+    pointer-events: none;
+  }
+  .gl-orb--a { width: 220px; height: 220px; left: -50px; top: 130px; background: oklch(0.72 0.16 55 / 0.55); }
+  .gl-orb--b { width: 200px; height: 200px; right: -60px; top: 300px; background: oklch(0.55 0.20 285 / 0.60); }
+  .gl-orb--c { width: 180px; height: 180px; left: 20px; bottom: 90px; background: oklch(0.78 0.14 200 / 0.42); }
+  .gl-root--collapsed .gl-orb--a { left: -80px; }
+  .gl-root--collapsed .gl-orb--b { right: -80px; }
+
+  /* ── Sheen: brillo superior + edge specular para vender el volumen ────── */
+  .gl-glass--sheen::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgb(100% 100% 100% / 0.18) 0%, transparent 30%);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.38);
   }
   .gl-brand {
+    position: relative; z-index: 1;
     display: flex; flex-direction: column; align-items: center; gap: 1px;
     padding: 22px 16px 16px;
     border-bottom: 1px solid var(--gl-divider);
@@ -411,7 +449,7 @@ const GLASS_CSS = `
   .gl-chev { color: oklch(0.74 0.14 200); text-shadow: 0 0 10px oklch(0.74 0.14 200 / 0.35); }
   .gl-brand-name { font-size: 16px; font-weight: 700; line-height: 1.15; color: var(--gl-brand-name); margin-top: 1px; }
 
-  .gl-nav { padding: 8px 12px 0; display: flex; flex-direction: column; gap: 2px; }
+  .gl-nav { padding: 0; display: flex; flex-direction: column; gap: 2px; }
 
   .gl-item {
     position: relative;
@@ -443,7 +481,7 @@ const GLASS_CSS = `
 
   .gl-divider { height: 1px; margin: 10px 14px; background: var(--gl-divider); }
 
-  .gl-cta-wrap { margin-top: auto; padding: 13px; }
+  .gl-cta-wrap { position: relative; z-index: 1; margin-top: auto; padding: 13px; }
   .gl-cta {
     width: 100%; height: 44px; border: none; border-radius: 14px;
     font-family: ${FD}; font-size: 13px; font-weight: 800; cursor: pointer;
@@ -490,8 +528,8 @@ const GLASS_CSS = `
 
   /* ── Estado colapsado (glass · 76px) ──────────────────────────────────── */
   .gl-root--collapsed { width: ${COLLAPSED_W}px; }
-  .gl-root--collapsed .gl-nav { padding: 8px 0 0; align-items: center; }
-  .gl-root--collapsed .gl-divider { margin: 10px 18px; }
+  .gl-root--collapsed .gl-nav { padding: 0; align-items: center; }
+  .gl-root--collapsed .gl-divider { margin: 10px 12px; }
 
   .gl-brand--mini { gap: 12px; padding: 14px 0 16px; }
   .gl-wordmark--mini { font-size: 20px; gap: 0; }
@@ -515,6 +553,29 @@ const GLASS_CSS = `
   }
   .gl-cta-mini:hover { transform: translateY(-1px); box-shadow: 0 6px 16px ${ORANGE_GLOW}; }
   .gl-cta-mini:active { transform: translateY(1px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gl-item, .gl-sub, .gl-cta, .gl-cta-mini { transition: none; }
+  }
+
+  /* Banner fundido con el glass — reemplaza el gradiente sólido del .tvb */
+  .tvb--glass {
+    background: rgb(100% 100% 100% / 0.07);
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    border: 1px solid rgb(100% 100% 100% / 0.14);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.20), 0 14px 30px -14px rgb(0% 0% 0% / 0.5);
+  }
+
+  /* Banner "seam" — sin card propia: se funde en el mismo panel glass que la nav */
+  .tvb--seam {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    border-top: 1px solid rgb(100% 100% 100% / 0.10);
+    margin-top: 4px;
+  }
 `;
 
 interface SubItem {
@@ -651,11 +712,18 @@ function ArrowIcon(): JSX.Element {
   );
 }
 
-function SubaspassBanner({ height }: { height: number }): JSX.Element {
+interface SubaspassBannerProps {
+  height: number;
+  variant?: "solid" | "glass" | "seam";
+}
+function SubaspassBanner({ height, variant }: SubaspassBannerProps): JSX.Element {
   let showDesc = true;
   if (height < 280) { showDesc = false; }
+  let bannerClass = "tvb";
+  if (variant === "glass") { bannerClass = "tvb tvb--glass"; }
+  if (variant === "seam") { bannerClass = "tvb tvb--seam"; }
   return (
-    <div className="tvb" style={{ height }}>
+    <div className={bannerClass} style={{ height }}>
       <div className="tvb-content">
         <p className="tvb-eyebrow">¿Te tienta el riesgo alto?</p>
         <h3 className="tvb-title">Compra Subaspass</h3>
@@ -1302,71 +1370,8 @@ function TraceSolidSidebar(): JSX.Element {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   EJEMPLO — propuesta de banner colapsado (hover flyout).
-   NO reemplaza el colapsado actual; se muestra al lado como referencia.
-   El CTA mini es el ancla; al hover revela el banner completo a la derecha.
-   ─────────────────────────────────────────────────────────────────────────── */
-
-const ROOT_STYLE = {
-  "--tv-bg": SOLID_BG,
-  "--tv-grad": ORANGE_GRAD,
-  "--tv-glow": ORANGE_GLOW,
-  "--tv-accent": ORANGE_ACCENT,
-} as CSSProperties;
-
-function noop(): void {}
-
-function ExampleMiniNav(): JSX.Element {
-  const items: JSX.Element[] = [];
-  for (const entry of NAV) {
-    const isActive = entry.label === "Empresas";
-    let cls = "tv-item tv-item--mini";
-    if (isActive) { cls = "tv-item tv-item--mini tv-item--active"; }
-    const item = (
-      <div className={cls} role="button" tabIndex={0} title={entry.label} aria-label={entry.label}>
-        <NavIcon path={iconFor(entry.label, entry.iconPath)} active={isActive} />
-      </div>
-    );
-    if (entry.section !== undefined) {
-      items.push(<div key={entry.label}><div className="tv-divider" />{item}</div>);
-    } else {
-      items.push(<div key={entry.label}>{item}</div>);
-    }
-  }
-  return <nav className="tv-nav" aria-label="Menú ejemplo">{items}</nav>;
-}
-
-function CollapsedBannerExample(): JSX.Element {
-  return (
-    <div className="tv-demo-wrap" style={ROOT_STYLE}>
-      <aside className="tv-root tv-root--collapsed" aria-label="Ejemplo · sidebar colapsado">
-        <div className="tv-brand tv-brand--mini">
-          <ToggleButton className="tv-toggle" ariaLabel="Expandir menú" hoverIcon={<ExpandIcon />} onClick={noop} />
-          <div className="tv-wordmark tv-wordmark--mini">
-            <span className="tv-chev">›</span>
-            <span className="tv-chev">‹</span>
-          </div>
-        </div>
-
-        <ExampleMiniNav />
-
-        <div className="tv-cta-wrap tv-cta-wrap--mini">
-          <button type="button" className="tvb-cta-mini" aria-label="Compra Subaspass" title="Compra Subaspass">
-            <ArrowIcon />
-          </button>
-        </div>
-      </aside>
-
-      <div className="tv-flyout">
-        <SubaspassBanner height={300} />
-      </div>
-    </div>
-  );
-}
-
-/* ───────────────────────────────────────────────────────────────────────────
-   Glass Sidebar — versión translúcida (Oscura / Clara). Reusa NAV + firma
-   naranja. Nav plano (sin subbandas) para resaltar la superficie de cristal.
+   Glass Sidebar — versión translúcida oscura. Reusa NAV + firma naranja.
+   Subbandas desplegables + vista compacta (toggle).
    ─────────────────────────────────────────────────────────────────────────── */
 
 interface GlassIconProps {
@@ -1384,11 +1389,33 @@ function GlassIcon({ path, active }: GlassIconProps): JSX.Element {
   );
 }
 
-function GlassSidebar(): JSX.Element {
+interface GlassSidebarProps {
+  orbs: boolean;
+  sheen: boolean;
+  bannerGlass: boolean;
+}
+function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Element {
   const [active, setActive] = useState<string>("Empresas");
   const [activeSub, setActiveSub] = useState<string | null>("Autoplan");
   const [open, setOpen] = useState<Set<string>>(new Set(["Empresas"]));
   const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  let glassClass = "gl-glass";
+  if (sheen) { glassClass = "gl-glass gl-glass--sheen"; }
+
+  let bannerVariant: "solid" | "glass" | "seam" = "solid";
+  if (bannerGlass) { bannerVariant = "seam"; }
+
+  function renderOrbs(): JSX.Element | null {
+    if (!orbs) { return null; }
+    return (
+      <>
+        <span className="gl-orb gl-orb--a" />
+        <span className="gl-orb gl-orb--b" />
+        <span className="gl-orb gl-orb--c" />
+      </>
+    );
+  }
 
   function handleToggleCollapse(): void {
     setCollapsed(function flip(prev) { return !prev; });
@@ -1473,6 +1500,7 @@ function GlassSidebar(): JSX.Element {
   if (collapsed) {
     return (
       <aside className="gl-root gl-root--dark gl-root--collapsed" aria-label="Navegación principal · glass">
+        {renderOrbs()}
         <div className="gl-brand gl-brand--mini">
           <ToggleButton
             className="tv-toggle"
@@ -1486,9 +1514,11 @@ function GlassSidebar(): JSX.Element {
           </div>
         </div>
 
-        <nav className="gl-nav" aria-label="Menú principal">
-          {NAV.map(renderGlassMini)}
-        </nav>
+        <div className={glassClass}>
+          <nav className="gl-nav" aria-label="Menú principal">
+            {NAV.map(renderGlassMini)}
+          </nav>
+        </div>
 
         <div className="gl-cta-wrap gl-cta-wrap--mini">
           <button type="button" className="gl-cta-mini" aria-label="Compra Subaspass" title="Compra Subaspass">
@@ -1501,6 +1531,7 @@ function GlassSidebar(): JSX.Element {
 
   return (
     <aside className="gl-root gl-root--dark" aria-label="Navegación principal · glass">
+      {renderOrbs()}
       <ToggleButton
         className="tv-toggle tv-collapse-btn"
         ariaLabel="Colapsar menú"
@@ -1517,13 +1548,18 @@ function GlassSidebar(): JSX.Element {
         <span className="gl-brand-name">Subastas</span>
       </div>
 
-      <nav className="gl-nav" aria-label="Menú principal">
-        {NAV.map(renderGlassEntry)}
-      </nav>
-
-      <div className="gl-cta-wrap">
-        <button type="button" className="gl-cta">Compra Subaspass</button>
+      <div className={glassClass}>
+        <nav className="gl-nav" aria-label="Menú principal">
+          {NAV.map(renderGlassEntry)}
+        </nav>
+        {bannerGlass && <SubaspassBanner height={280} variant={bannerVariant} />}
       </div>
+
+      {!bannerGlass && (
+        <div className="gl-cta-wrap">
+          <SubaspassBanner height={300} variant={bannerVariant} />
+        </div>
+      )}
     </aside>
   );
 }
@@ -1551,19 +1587,6 @@ export default function SidebarSolidPage(): JSX.Element {
 
       <div style={{ width: "100%", maxWidth: 1180, margin: "48px auto 0", textAlign: "center" }}>
         <h2 style={{ fontFamily: FD, fontSize: 18, fontWeight: 800, margin: "0 0 6px", color: "var(--vmc-color-text-primary, #fff)" }}>
-          Ejemplo · Banner en colapsado (hover flyout)
-        </h2>
-        <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary, #8b8a9f)", margin: "0 0 28px", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-          Propuesta — <b>no reemplaza el actual</b>. A 76px el CTA naranja es el ancla;
-          al pasar el mouse revela el banner completo como panel flotante a la derecha.
-        </p>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", padding: "20px 0 120px" }}>
-          <CollapsedBannerExample />
-        </div>
-      </div>
-
-      <div style={{ width: "100%", maxWidth: 1180, margin: "16px auto 0", textAlign: "center" }}>
-        <h2 style={{ fontFamily: FD, fontSize: 18, fontWeight: 800, margin: "0 0 6px", color: "var(--vmc-color-text-primary, #fff)" }}>
           Glass · Oscuro
         </h2>
         <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary, #8b8a9f)", margin: "0 0 28px", maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
@@ -1572,8 +1595,16 @@ export default function SidebarSolidPage(): JSX.Element {
         </p>
         <div className="gl-stage">
           <div className="gl-col">
-            <GlassSidebar />
-            <span className="gl-tag">Glass · Oscuro</span>
+            <GlassSidebar orbs={false} sheen={false} bannerGlass={false} />
+            <span className="gl-tag">Base</span>
+          </div>
+          <div className="gl-col">
+            <GlassSidebar orbs sheen={false} bannerGlass={false} />
+            <span className="gl-tag">+ Luz (orb)</span>
+          </div>
+          <div className="gl-col">
+            <GlassSidebar orbs sheen bannerGlass />
+            <span className="gl-tag">+ Luz + Sheen + Banner glass</span>
           </div>
         </div>
       </div>
