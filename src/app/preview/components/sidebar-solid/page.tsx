@@ -1354,6 +1354,116 @@ function TraceSolidSidebar(): JSX.Element {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
+   Export SVG — versiones glass (Panel / Oscuro). Reconstrucción vectorial:
+   fondo sólido + capa glass (rect translúcido) + nav + subbandas + banner.
+   Reusa los builders del export sólido (buildItemMarkup, buildSubbandMarkup,
+   buildBannerMarkup) con la geometría del estado desplegado.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+const GLASS_SVG_BG = "#250C5A";
+const GLASS_STATE: ExportState = {
+  id: "glass", title: "Glass", active: "Empresas", hover: null,
+  open: ["Empresas"], activeSub: "Autoplan",
+};
+
+function buildGlassBrand(): string {
+  return [
+    `<g id="Brand">`,
+    `<text x="120" y="50" font-family="Plus Jakarta Sans, sans-serif" font-size="23" font-weight="800" text-anchor="middle"><tspan fill="#2BD4D9">›</tspan><tspan fill="#FFFFFF">vmc</tspan><tspan fill="#2BD4D9">‹</tspan></text>`,
+    `<text x="120" y="72" font-family="Plus Jakarta Sans, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" fill-opacity="0.55" text-anchor="middle">Subastas</text>`,
+    `<line x1="0" y1="92" x2="240" y2="92" stroke="#FFFFFF" stroke-opacity="0.12"/>`,
+    `</g>`,
+  ].join("");
+}
+
+function buildGlassBody(variant: "panel" | "smoke"): { markup: string; height: number } {
+  const state = GLASS_STATE;
+  const nav: string[] = [];
+
+  let y = 104;
+  for (const entry of NAV) {
+    if (entry.section !== undefined) {
+      nav.push(`<line x1="24" y1="${y + 10}" x2="216" y2="${y + 10}" stroke="#FFFFFF" stroke-opacity="0.10"/>`);
+      y += 21;
+    }
+    nav.push(buildItemMarkup(entry, y, state));
+    y += 48;
+    if (state.open.includes(entry.label) && entry.children !== undefined) {
+      y += 4;
+      const clipId = `gband-${variant}-${svgSlug(entry.label)}`;
+      nav.push(buildSubbandMarkup(entry, y, state, clipId));
+      y += entry.children.length * 40 + 8;
+    }
+  }
+
+  const bannerY = y + 8;
+  const banner = buildBannerMarkup(bannerY);
+
+  const panelTop = 98;
+  const panelBottom = bannerY + SVG_BANNER_H + 6;
+  const panelH = panelBottom - panelTop;
+  const height = panelBottom + 12;
+
+  let panelFill = `<rect x="12" y="${panelTop}" width="216" height="${panelH}" rx="16" fill="#FFFFFF" fill-opacity="0.07"/>`;
+  let sheen = "";
+  let panelStroke = `<rect x="12" y="${panelTop}" width="216" height="${panelH}" rx="16" fill="none" stroke="#FFFFFF" stroke-opacity="0.12"/>`;
+  if (variant === "smoke") {
+    panelFill = `<rect x="12" y="${panelTop}" width="216" height="${panelH}" rx="16" fill="#000000" fill-opacity="0.45"/>`;
+    sheen = `<rect x="12" y="${panelTop}" width="216" height="40" rx="16" fill="#FFFFFF" fill-opacity="0.10"/>`;
+    panelStroke = `<rect x="12" y="${panelTop}" width="216" height="${panelH}" rx="16" fill="none" stroke="#FFFFFF" stroke-opacity="0.10"/>`;
+  }
+
+  const bg = `<rect id="Fondo" x="0" y="0" width="${SVG_VIEW.w}" height="${height}" fill="${GLASS_SVG_BG}"/>`;
+  const markup = bg + buildGlassBrand() + panelFill + sheen + nav.join("") + banner + panelStroke;
+  return { markup, height };
+}
+
+function buildGlassSvg(variant: "panel" | "smoke"): string {
+  const body = buildGlassBody(variant);
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${SVG_VIEW.w}" height="${body.height}" viewBox="0 0 ${SVG_VIEW.w} ${body.height}" fill="none">`,
+    `<defs>${SVG_DEFS}</defs>`,
+    `<g id="Sidebar-Glass-${variant}">${body.markup}</g>`,
+    `</svg>`,
+  ].join("");
+}
+
+interface GlassSvgPanelProps {
+  variant: "panel" | "smoke";
+}
+function GlassSvgPanel({ variant }: GlassSvgPanelProps): JSX.Element {
+  let fileName = "sidebar-glass-panel.svg";
+  let label = "Descargar Panel · SVG";
+  if (variant === "smoke") {
+    fileName = "sidebar-glass-oscuro.svg";
+    label = "Descargar Oscuro · SVG";
+  }
+  function handleDownload(): void {
+    downloadSvg(buildGlassSvg(variant), fileName);
+  }
+  return (
+    <button
+      type="button"
+      onClick={handleDownload}
+      style={{
+        height: 32,
+        padding: "0 14px",
+        borderRadius: 9,
+        cursor: "pointer",
+        fontFamily: FD,
+        fontSize: 12,
+        fontWeight: 700,
+        color: "rgb(255 255 255 / 0.82)",
+        background: "transparent",
+        border: "1px solid rgb(255 255 255 / 0.22)",
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
    Glass Sidebar — versión translúcida oscura. Reusa NAV + firma naranja.
    Subbandas desplegables + vista compacta (toggle).
    ─────────────────────────────────────────────────────────────────────────── */
@@ -1558,10 +1668,12 @@ export default function SidebarSolidPage(): JSX.Element {
           <div className="gl-col">
             <GlassSidebar variant="panel" />
             <span className="gl-tag">Glass · Panel</span>
+            <GlassSvgPanel variant="panel" />
           </div>
           <div className="gl-col">
             <GlassSidebar variant="smoke" />
             <span className="gl-tag">Glass · Oscuro</span>
+            <GlassSvgPanel variant="smoke" />
           </div>
         </div>
       </div>
