@@ -358,10 +358,7 @@ const GLASS_CSS = `
     justify-content: center;
     align-items: flex-start;
     overflow: hidden;
-    background:
-      radial-gradient(90% 70% at 50% 0%, oklch(0.30 0.20 285 / 0.55) 0%, transparent 62%),
-      var(--vmc-color-background-secondary, #0c0a1c);
-    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.05), 0 24px 56px -24px rgb(0% 0% 0% / 0.5);
+    background: transparent;
   }
 
   .gl-col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -392,14 +389,20 @@ const GLASS_CSS = `
     overflow: hidden;
     font-family: ${FD};
   }
-  /* Fondo sólido del sidebar — nuestro color (capa roja del boceto) */
+  /* Variante PANEL (original) — fondo sólido + capa glass interna frosteada */
   .gl-root--dark {
     background: color-mix(in srgb, ${SOLID_BG} 80%, #000);
     border: 1px solid rgb(100% 100% 100% / 0.10);
     box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.08), 0 30px 60px -20px rgb(0% 0% 0% / 0.55);
   }
+  /* Variante SMOKE — mismo fondo sólido que panel, pero la capa glass es oscura */
+  .gl-root--smoke {
+    background: color-mix(in srgb, ${SOLID_BG} 80%, #000);
+    border: 1px solid rgb(100% 100% 100% / 0.10);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.08), 0 30px 60px -20px rgb(0% 0% 0% / 0.55);
+  }
 
-  /* Capa glass que va ENCIMA del fondo sólido (capa azul del boceto) */
+  /* Capa glass interna (variante panel) — capa azul del boceto */
   .gl-glass {
     position: relative;
     z-index: 1;
@@ -411,31 +414,23 @@ const GLASS_CSS = `
     -webkit-backdrop-filter: blur(22px) saturate(1.5);
     border: 1px solid rgb(100% 100% 100% / 0.12);
     box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.12), 0 14px 30px -14px rgb(0% 0% 0% / 0.5);
+    overflow: hidden;
   }
   .gl-root--collapsed .gl-glass { margin: 6px 8px 10px; padding: 4px; }
 
-  /* ── Orbs: luz detrás del glass para que el blur refracte ─────────────── */
-  .gl-orb {
-    position: absolute; z-index: 0;
-    border-radius: 50%;
-    filter: blur(44px);
-    pointer-events: none;
+  /* En SMOKE la capa glass interna es OSCURA y marcada: tinte negro + sheen
+     superior + borde brillante para que el cristal oscuro se note claramente */
+  .gl-root--smoke .gl-glass {
+    background:
+      linear-gradient(180deg, rgb(100% 100% 100% / 0.10) 0%, transparent 20%),
+      rgb(0% 0% 0% / 0.45);
+    border: 1px solid rgb(100% 100% 100% / 0.10);
+    box-shadow:
+      inset 0 1px 0 rgb(100% 100% 100% / 0.20),
+      inset 0 0 24px rgb(0% 0% 0% / 0.35),
+      0 16px 32px -14px rgb(0% 0% 0% / 0.6);
   }
-  .gl-orb--a { width: 220px; height: 220px; left: -50px; top: 130px; background: oklch(0.72 0.16 55 / 0.55); }
-  .gl-orb--b { width: 200px; height: 200px; right: -60px; top: 300px; background: oklch(0.55 0.20 285 / 0.60); }
-  .gl-orb--c { width: 180px; height: 180px; left: 20px; bottom: 90px; background: oklch(0.78 0.14 200 / 0.42); }
-  .gl-root--collapsed .gl-orb--a { left: -80px; }
-  .gl-root--collapsed .gl-orb--b { right: -80px; }
 
-  /* ── Sheen: brillo superior + edge specular para vender el volumen ────── */
-  .gl-glass--sheen::after {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgb(100% 100% 100% / 0.18) 0%, transparent 30%);
-    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.38);
-  }
   .gl-brand {
     position: relative; z-index: 1;
     display: flex; flex-direction: column; align-items: center; gap: 1px;
@@ -1379,32 +1374,17 @@ function GlassIcon({ path, active }: GlassIconProps): JSX.Element {
 }
 
 interface GlassSidebarProps {
-  orbs: boolean;
-  sheen: boolean;
-  bannerGlass: boolean;
+  variant: "panel" | "smoke";
 }
-function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Element {
+function GlassSidebar({ variant }: GlassSidebarProps): JSX.Element {
   const [active, setActive] = useState<string>("Empresas");
   const [activeSub, setActiveSub] = useState<string | null>("Autoplan");
   const [open, setOpen] = useState<Set<string>>(new Set(["Empresas"]));
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  let glassClass = "gl-glass";
-  if (sheen) { glassClass = "gl-glass gl-glass--sheen"; }
-
-  let bannerVariant: "solid" | "attached" = "solid";
-  if (bannerGlass) { bannerVariant = "attached"; }
-
-  function renderOrbs(): JSX.Element | null {
-    if (!orbs) { return null; }
-    return (
-      <>
-        <span className="gl-orb gl-orb--a" />
-        <span className="gl-orb gl-orb--b" />
-        <span className="gl-orb gl-orb--c" />
-      </>
-    );
-  }
+  let rootClass = "gl-root gl-root--dark";
+  if (variant === "smoke") { rootClass = "gl-root gl-root--smoke"; }
+  const collapsedClass = rootClass + " gl-root--collapsed";
 
   function handleToggleCollapse(): void {
     setCollapsed(function flip(prev) { return !prev; });
@@ -1488,8 +1468,7 @@ function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Elem
 
   if (collapsed) {
     return (
-      <aside className="gl-root gl-root--dark gl-root--collapsed" aria-label="Navegación principal · glass">
-        {renderOrbs()}
+      <aside className={collapsedClass} aria-label="Navegación principal · glass">
         <div className="gl-brand gl-brand--mini">
           <ToggleButton
             className="tv-toggle"
@@ -1503,7 +1482,7 @@ function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Elem
           </div>
         </div>
 
-        <div className={glassClass}>
+        <div className="gl-glass">
           <nav className="gl-nav" aria-label="Menú principal">
             {NAV.map(renderGlassMini)}
           </nav>
@@ -1519,8 +1498,7 @@ function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Elem
   }
 
   return (
-    <aside className="gl-root gl-root--dark" aria-label="Navegación principal · glass">
-      {renderOrbs()}
+    <aside className={rootClass} aria-label="Navegación principal · glass">
       <ToggleButton
         className="tv-toggle tv-collapse-btn"
         ariaLabel="Colapsar menú"
@@ -1537,18 +1515,12 @@ function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Elem
         <span className="gl-brand-name">Subastas</span>
       </div>
 
-      <div className={glassClass}>
+      <div className="gl-glass">
         <nav className="gl-nav" aria-label="Menú principal">
           {NAV.map(renderGlassEntry)}
         </nav>
-        {bannerGlass && <SubaspassBanner height={280} variant={bannerVariant} />}
+        <SubaspassBanner height={280} variant="attached" />
       </div>
-
-      {!bannerGlass && (
-        <div className="gl-cta-wrap">
-          <SubaspassBanner height={300} variant={bannerVariant} />
-        </div>
-      )}
     </aside>
   );
 }
@@ -1584,12 +1556,12 @@ export default function SidebarSolidPage(): JSX.Element {
         </p>
         <div className="gl-stage">
           <div className="gl-col">
-            <GlassSidebar orbs={false} sheen={false} bannerGlass />
-            <span className="gl-tag">Glass</span>
+            <GlassSidebar variant="panel" />
+            <span className="gl-tag">Glass · Panel</span>
           </div>
           <div className="gl-col">
-            <GlassSidebar orbs={false} sheen bannerGlass />
-            <span className="gl-tag">Glass + Sheen</span>
+            <GlassSidebar variant="smoke" />
+            <span className="gl-tag">Glass · Oscuro</span>
           </div>
         </div>
       </div>
