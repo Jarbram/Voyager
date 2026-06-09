@@ -558,23 +558,13 @@ const GLASS_CSS = `
     .gl-item, .gl-sub, .gl-cta, .gl-cta-mini { transition: none; }
   }
 
-  /* Banner fundido con el glass — reemplaza el gradiente sólido del .tvb */
-  .tvb--glass {
-    background: rgb(100% 100% 100% / 0.07);
-    backdrop-filter: blur(22px) saturate(1.5);
-    -webkit-backdrop-filter: blur(22px) saturate(1.5);
-    border: 1px solid rgb(100% 100% 100% / 0.14);
-    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.20), 0 14px 30px -14px rgb(0% 0% 0% / 0.5);
-  }
-
-  /* Banner "seam" — sin card propia: se funde en el mismo panel glass que la nav */
-  .tvb--seam {
-    background: transparent;
-    border: none;
-    border-radius: 0;
+  /* Banner "attached" — conserva su gradiente pero vive DENTRO del panel
+     glass como sección inferior: fusionado al sidebar, sin card flotante */
+  .gl-glass { overflow: hidden; }
+  .tvb--attached {
+    border-radius: 12px;
     box-shadow: none;
-    border-top: 1px solid rgb(100% 100% 100% / 0.10);
-    margin-top: 4px;
+    margin-top: 8px;
   }
 `;
 
@@ -714,14 +704,13 @@ function ArrowIcon(): JSX.Element {
 
 interface SubaspassBannerProps {
   height: number;
-  variant?: "solid" | "glass" | "seam";
+  variant?: "solid" | "attached";
 }
 function SubaspassBanner({ height, variant }: SubaspassBannerProps): JSX.Element {
   let showDesc = true;
   if (height < 280) { showDesc = false; }
   let bannerClass = "tvb";
-  if (variant === "glass") { bannerClass = "tvb tvb--glass"; }
-  if (variant === "seam") { bannerClass = "tvb tvb--seam"; }
+  if (variant === "attached") { bannerClass = "tvb tvb--attached"; }
   return (
     <div className={bannerClass} style={{ height }}>
       <div className="tvb-content">
@@ -1403,8 +1392,8 @@ function GlassSidebar({ orbs, sheen, bannerGlass }: GlassSidebarProps): JSX.Elem
   let glassClass = "gl-glass";
   if (sheen) { glassClass = "gl-glass gl-glass--sheen"; }
 
-  let bannerVariant: "solid" | "glass" | "seam" = "solid";
-  if (bannerGlass) { bannerVariant = "seam"; }
+  let bannerVariant: "solid" | "attached" = "solid";
+  if (bannerGlass) { bannerVariant = "attached"; }
 
   function renderOrbs(): JSX.Element | null {
     if (!orbs) { return null; }
@@ -1595,16 +1584,12 @@ export default function SidebarSolidPage(): JSX.Element {
         </p>
         <div className="gl-stage">
           <div className="gl-col">
-            <GlassSidebar orbs={false} sheen={false} bannerGlass={false} />
-            <span className="gl-tag">Base</span>
+            <GlassSidebar orbs={false} sheen={false} bannerGlass />
+            <span className="gl-tag">Glass</span>
           </div>
           <div className="gl-col">
-            <GlassSidebar orbs sheen={false} bannerGlass={false} />
-            <span className="gl-tag">+ Luz (orb)</span>
-          </div>
-          <div className="gl-col">
-            <GlassSidebar orbs sheen bannerGlass />
-            <span className="gl-tag">+ Luz + Sheen + Banner glass</span>
+            <GlassSidebar orbs={false} sheen bannerGlass />
+            <span className="gl-tag">Glass + Sheen</span>
           </div>
         </div>
       </div>
