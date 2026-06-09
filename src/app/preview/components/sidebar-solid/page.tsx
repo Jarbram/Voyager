@@ -342,6 +342,181 @@ const TV_CSS = `
   }
 `;
 
+/* ───────────────────────────────────────────────────────────────────────────
+   Glass · 2 versiones nuevas — misma data y firma naranja, superficie
+   translúcida con backdrop-blur. Se conserva el fondo (vault) detrás del
+   panel: el blur lo recoge. Variante Oscura (tinte vault) y Clara (blanco).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+const GLASS_CSS = `
+  .gl-stage {
+    position: relative;
+    border-radius: 28px;
+    padding: 44px 40px;
+    display: flex;
+    gap: 36px;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+    background:
+      radial-gradient(90% 70% at 50% 0%, oklch(0.30 0.20 285 / 0.55) 0%, transparent 62%),
+      var(--vmc-color-background-secondary, #0c0a1c);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.05), 0 24px 56px -24px rgb(0% 0% 0% / 0.5);
+  }
+
+  .gl-col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .gl-tag {
+    font-family: ${FD};
+    font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+    color: rgb(100% 100% 100% / 0.92);
+    padding: 5px 12px; border-radius: 999px;
+    background: rgb(0% 0% 0% / 0.28);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .gl-root {
+    --gl-text: rgb(100% 100% 100% / 0.90);
+    --gl-dim: rgb(100% 100% 100% / 0.62);
+    --gl-hover: rgb(100% 100% 100% / 0.10);
+    --gl-divider: rgb(100% 100% 100% / 0.14);
+    --gl-brand-name: rgb(100% 100% 100% / 0.55);
+    --gl-icon: rgb(100% 100% 100% / 0.66);
+    position: relative;
+    width: ${SIDEBAR_W}px;
+    flex-shrink: 0;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 26px;
+    overflow: hidden;
+    font-family: ${FD};
+    backdrop-filter: blur(30px) saturate(1.6);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  }
+  .gl-root--dark {
+    background: color-mix(in srgb, ${SOLID_BG} 62%, transparent);
+    border: 1px solid rgb(100% 100% 100% / 0.14);
+    box-shadow: inset 0 1px 0 rgb(100% 100% 100% / 0.14), 0 30px 60px -20px rgb(0% 0% 0% / 0.55);
+  }
+  .gl-brand {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    padding: 22px 16px 16px;
+    border-bottom: 1px solid var(--gl-divider);
+  }
+  .gl-wordmark {
+    display: flex; align-items: center; gap: 2px;
+    font-size: 23px; font-weight: 800; line-height: 1; color: var(--gl-text);
+  }
+  .gl-chev { color: oklch(0.74 0.14 200); text-shadow: 0 0 10px oklch(0.74 0.14 200 / 0.35); }
+  .gl-brand-name { font-size: 16px; font-weight: 700; line-height: 1.15; color: var(--gl-brand-name); margin-top: 1px; }
+
+  .gl-nav { padding: 8px 12px 0; display: flex; flex-direction: column; gap: 2px; }
+
+  .gl-item {
+    position: relative;
+    display: flex; align-items: center; gap: 13px;
+    height: 46px; padding: 0 14px; border-radius: 14px;
+    cursor: pointer; user-select: none;
+    transition: background-color 160ms ease, transform 180ms cubic-bezier(0.25,0.8,0.25,1), box-shadow 220ms ease;
+  }
+  .gl-item:hover { background-color: var(--gl-hover); transform: translateX(2px); }
+  .gl-item:focus-visible { outline: 2px solid var(--gl-text); outline-offset: -2px; }
+  .gl-item--active {
+    background-image: ${ORANGE_GRAD};
+    box-shadow: 0 8px 20px -6px ${ORANGE_GLOW}, inset 0 1px 0 rgb(100% 100% 100% / 0.25);
+  }
+  .gl-icon { flex-shrink: 0; transition: stroke 180ms ease; }
+  .gl-label {
+    flex: 1; font-size: 14px; line-height: 20px; color: var(--gl-text);
+    text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .gl-item--active .gl-label { color: var(--vmc-color-base-white, #fff); font-weight: 700; }
+  .gl-count {
+    font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px;
+    color: ${ORANGE_ACCENT};
+    background: color-mix(in oklch, ${ORANGE_ACCENT} 18%, transparent);
+    flex-shrink: 0;
+  }
+  .gl-item--active .gl-count { color: var(--vmc-color-base-white, #fff); background: rgb(100% 100% 100% / 0.22); }
+
+  .gl-divider { height: 1px; margin: 10px 14px; background: var(--gl-divider); }
+
+  .gl-cta-wrap { margin-top: auto; padding: 13px; }
+  .gl-cta {
+    width: 100%; height: 44px; border: none; border-radius: 14px;
+    font-family: ${FD}; font-size: 13px; font-weight: 800; cursor: pointer;
+    color: var(--vmc-color-base-white, #fff);
+    background-image: ${ORANGE_GRAD};
+    box-shadow: 0 6px 16px ${ORANGE_GLOW};
+    transition: transform 160ms, box-shadow 160ms;
+  }
+  .gl-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px ${ORANGE_GLOW}; }
+  .gl-cta:active { transform: translateY(1px); }
+
+  /* ── Subniveles desplegables (glass) ──────────────────────────────────── */
+  .gl-subband {
+    background-color: rgb(0% 0% 0% / 0.22);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 4px 0 4px;
+    box-shadow: inset 0 0 0 1px rgb(100% 100% 100% / 0.05);
+  }
+  .gl-sub {
+    position: relative;
+    display: flex; align-items: center; gap: 8px;
+    height: 40px;
+    padding: 0 16px 0 45px;
+    cursor: pointer;
+    transition: background-color 150ms, transform 150ms;
+  }
+  .gl-sub:hover { background-color: var(--gl-hover); transform: translateX(2px); }
+  .gl-sub--active { background-color: rgb(100% 100% 100% / 0.07); }
+  .gl-sub--active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 3px; border-radius: 0 3px 3px 0;
+    background-image: ${ORANGE_GRAD};
+    box-shadow: 0 0 12px ${ORANGE_GLOW};
+  }
+  .gl-sub-label {
+    flex: 1; font-size: 13px; color: var(--gl-dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .gl-sub--active .gl-sub-label { color: var(--gl-text); font-weight: 600; }
+  .gl-sub-count { font-size: 12px; color: var(--gl-dim); flex-shrink: 0; }
+
+  /* ── Estado colapsado (glass · 76px) ──────────────────────────────────── */
+  .gl-root--collapsed { width: ${COLLAPSED_W}px; }
+  .gl-root--collapsed .gl-nav { padding: 8px 0 0; align-items: center; }
+  .gl-root--collapsed .gl-divider { margin: 10px 18px; }
+
+  .gl-brand--mini { gap: 12px; padding: 14px 0 16px; }
+  .gl-wordmark--mini { font-size: 20px; gap: 0; }
+
+  .gl-item--mini {
+    width: 48px; height: 48px;
+    margin: 4px auto; padding: 0; gap: 0;
+    justify-content: center;
+  }
+  .gl-item--mini:hover { transform: none; }
+
+  .gl-cta-wrap--mini { padding: 13px 0; }
+  .gl-cta-mini {
+    width: 48px; height: 48px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 14px; cursor: pointer;
+    color: var(--vmc-color-base-white, #fff);
+    background-image: ${ORANGE_GRAD};
+    box-shadow: 0 4px 12px ${ORANGE_GLOW};
+    transition: transform 160ms, box-shadow 160ms;
+  }
+  .gl-cta-mini:hover { transform: translateY(-1px); box-shadow: 0 6px 16px ${ORANGE_GLOW}; }
+  .gl-cta-mini:active { transform: translateY(1px); }
+`;
+
 interface SubItem {
   label: string;
   count: number;
@@ -1189,10 +1364,175 @@ function CollapsedBannerExample(): JSX.Element {
   );
 }
 
+/* ───────────────────────────────────────────────────────────────────────────
+   Glass Sidebar — versión translúcida (Oscura / Clara). Reusa NAV + firma
+   naranja. Nav plano (sin subbandas) para resaltar la superficie de cristal.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+interface GlassIconProps {
+  path: string;
+  active: boolean;
+}
+function GlassIcon({ path, active }: GlassIconProps): JSX.Element {
+  let stroke = "var(--gl-icon)";
+  if (active) { stroke = "var(--vmc-color-base-white, #fff)"; }
+  return (
+    <svg className="gl-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d={path} />
+    </svg>
+  );
+}
+
+function GlassSidebar(): JSX.Element {
+  const [active, setActive] = useState<string>("Empresas");
+  const [activeSub, setActiveSub] = useState<string | null>("Autoplan");
+  const [open, setOpen] = useState<Set<string>>(new Set(["Empresas"]));
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  function handleToggleCollapse(): void {
+    setCollapsed(function flip(prev) { return !prev; });
+  }
+
+  function handleToggle(label: string): void {
+    const next = new Set(open);
+    if (next.has(label)) { next.delete(label); } else { next.add(label); }
+    setOpen(next);
+  }
+
+  function handleSelect(entry: NavEntry): void {
+    setActive(entry.label);
+    if (entry.children !== undefined) {
+      handleToggle(entry.label);
+    } else {
+      setActiveSub(null);
+    }
+  }
+
+  function handleSelectSub(label: string): void {
+    setActiveSub(label);
+  }
+
+  function renderGlassMini(entry: NavEntry): JSX.Element {
+    const isActive = active === entry.label;
+    let itemClass = "gl-item gl-item--mini";
+    if (isActive) { itemClass = "gl-item gl-item--mini gl-item--active"; }
+    function onClick(): void { handleSelect(entry); }
+    return (
+      <div key={entry.label}>
+        {entry.section !== undefined && <div className="gl-divider" />}
+        <div
+          className={itemClass}
+          role="button" tabIndex={0}
+          title={entry.label} aria-label={entry.label}
+          onClick={onClick}
+        >
+          <GlassIcon path={iconFor(entry.label, entry.iconPath)} active={isActive} />
+        </div>
+      </div>
+    );
+  }
+
+  function renderGlassEntry(entry: NavEntry): JSX.Element {
+    const isActive = active === entry.label;
+    const showChildren = entry.children !== undefined && open.has(entry.label);
+    let itemClass = "gl-item";
+    if (isActive) { itemClass = "gl-item gl-item--active"; }
+    function onClick(): void { handleSelect(entry); }
+    return (
+      <div key={entry.label}>
+        {entry.section !== undefined && <div className="gl-divider" />}
+
+        <div className={itemClass} role="button" tabIndex={0} onClick={onClick}>
+          <GlassIcon path={iconFor(entry.label, entry.iconPath)} active={isActive} />
+          <span className="gl-label">{entry.label}</span>
+          {entry.children !== undefined && <span className="gl-count">{entry.children.length}</span>}
+          {entry.children !== undefined && <ChevronIcon open={open.has(entry.label)} />}
+        </div>
+
+        {showChildren && (
+          <div className="gl-subband">
+            {entry.children!.map(function renderSub(sub) {
+              const subActive = activeSub === sub.label;
+              let subClass = "gl-sub";
+              if (subActive) { subClass = "gl-sub gl-sub--active"; }
+              function onSubClick(): void { handleSelectSub(sub.label); }
+              return (
+                <div key={sub.label} className={subClass} role="button" tabIndex={0} onClick={onSubClick}>
+                  <span className="gl-sub-label">{sub.label}</span>
+                  <span className="gl-sub-count">({sub.count})</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (collapsed) {
+    return (
+      <aside className="gl-root gl-root--dark gl-root--collapsed" aria-label="Navegación principal · glass">
+        <div className="gl-brand gl-brand--mini">
+          <ToggleButton
+            className="tv-toggle"
+            ariaLabel="Expandir menú"
+            hoverIcon={<ExpandIcon />}
+            onClick={handleToggleCollapse}
+          />
+          <div className="gl-wordmark gl-wordmark--mini">
+            <span className="gl-chev">›</span>
+            <span className="gl-chev">‹</span>
+          </div>
+        </div>
+
+        <nav className="gl-nav" aria-label="Menú principal">
+          {NAV.map(renderGlassMini)}
+        </nav>
+
+        <div className="gl-cta-wrap gl-cta-wrap--mini">
+          <button type="button" className="gl-cta-mini" aria-label="Compra Subaspass" title="Compra Subaspass">
+            <ArrowIcon />
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  return (
+    <aside className="gl-root gl-root--dark" aria-label="Navegación principal · glass">
+      <ToggleButton
+        className="tv-toggle tv-collapse-btn"
+        ariaLabel="Colapsar menú"
+        hoverIcon={<CollapseIcon />}
+        onClick={handleToggleCollapse}
+      />
+
+      <div className="gl-brand">
+        <div className="gl-wordmark">
+          <span className="gl-chev">›</span>
+          <span>vmc</span>
+          <span className="gl-chev">‹</span>
+        </div>
+        <span className="gl-brand-name">Subastas</span>
+      </div>
+
+      <nav className="gl-nav" aria-label="Menú principal">
+        {NAV.map(renderGlassEntry)}
+      </nav>
+
+      <div className="gl-cta-wrap">
+        <button type="button" className="gl-cta">Compra Subaspass</button>
+      </div>
+    </aside>
+  );
+}
+
 export default function SidebarSolidPage(): JSX.Element {
   return (
     <main style={{ background: "var(--vmc-color-background-secondary, #0c0a1c)", minHeight: "100vh", padding: "40px 32px", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <style>{TV_CSS}</style>
+      <style>{GLASS_CSS}</style>
 
       <div style={{ maxWidth: 1180, width: "100%", margin: "0 auto 40px", textAlign: "center" }}>
         <h1 style={{ fontFamily: FD, fontSize: 24, fontWeight: 800, margin: "0 0 8px", color: "var(--vmc-color-text-primary, #fff)" }}>
@@ -1219,6 +1559,22 @@ export default function SidebarSolidPage(): JSX.Element {
         </p>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", padding: "20px 0 120px" }}>
           <CollapsedBannerExample />
+        </div>
+      </div>
+
+      <div style={{ width: "100%", maxWidth: 1180, margin: "16px auto 0", textAlign: "center" }}>
+        <h2 style={{ fontFamily: FD, fontSize: 18, fontWeight: 800, margin: "0 0 6px", color: "var(--vmc-color-text-primary, #fff)" }}>
+          Glass · Oscuro
+        </h2>
+        <p style={{ fontFamily: FD, fontSize: 13, color: "var(--vmc-color-text-tertiary, #8b8a9f)", margin: "0 0 28px", maxWidth: 580, marginLeft: "auto", marginRight: "auto" }}>
+          Mismo sistema y firma naranja sobre superficie translúcida (<b>backdrop-blur</b>).
+          Subbandas <b>desplegables</b> y <b>vista compacta</b> — usa el toggle superior izquierdo para alternar.
+        </p>
+        <div className="gl-stage">
+          <div className="gl-col">
+            <GlassSidebar />
+            <span className="gl-tag">Glass · Oscuro</span>
+          </div>
         </div>
       </div>
     </main>
